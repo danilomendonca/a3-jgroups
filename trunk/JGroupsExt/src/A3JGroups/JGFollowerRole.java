@@ -4,6 +4,7 @@ import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
+import org.jgroups.View;
 import org.jgroups.blocks.ReplicatedHashMap;
 
 
@@ -14,35 +15,8 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	private String nodeID;
 	private JChannel chan;
 	protected A3JGroup group;
-	private long timeout = 1000;
 	private ReplicatedHashMap<String, Address> map;
-	/*
-	public void activate(A3JGroup group) throws Exception {
-		active = true;
-		chan = new JChannel();
-		chan.setReceiver(this);
-		chan.connect(group.getGroupName());
-		this.group = group;
-	}
-	*/
 	
-	public void activate(String groupName) throws Exception {
-		active = true;
-		chan = new JChannel();
-		chan.setReceiver(this);
-		chan.connect(groupName);
-		map = new ReplicatedHashMap<String, Address>(chan);
-		map.start(timeout);
-		if(map.get("supervisor")==null)
-			deactivate();
-	}
-	
-	public void deactivate() {
-		active=false;
-		chan.disconnect();
-		chan.close();
-	}
-
 	public int getResourceCost() {
 		return resourceCost;
 	}
@@ -75,12 +49,41 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		this.active = active;
 	}
 	
+	public void setChan(JChannel chan) {
+		this.chan = chan;
+	}
+
+	public void setMap(ReplicatedHashMap<String, Address> map) {
+		this.map = map;
+	}
+
 	public abstract void run();
 	
 	public void receive(Message msg) {
-		A3JGMessage mex = (A3JGMessage) msg.getObject();
-		messageFromSupervisor(mex);
+		if(msg.getObject().equals("fitnessFunction")){
+			//inviare all'indirizzo in mappa ala chiava change il valore della fitness
+		}else if(msg.getObject().equals("fitnessFunctionResult")){
+			//add in change riceve risultati della fitness (anche il suo???), se nessuno è abile chiudere cluster
+		}else{
+			A3JGMessage mex = (A3JGMessage) msg.getObject();
+			messageFromSupervisor(mex);
+		}
 	}
+	
+	public void viewAccepted(View view) {
+        if(!view.getMembers().contains(map.get("supervisor")))
+        	if(map.putIfAbsent("change", chan.getAddress())==null){
+        		map.remove("supervisor");
+        		//invio richiesta per trovare nuovo supervisore
+        		Message msg = new Message(null, "fitnessFunction");
+        		try {
+					chan.send(msg);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+        		
+        	}
+    }
 	
 	public boolean sendMessageToSupervisor(A3JGMessage mex){
 		try {

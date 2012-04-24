@@ -15,38 +15,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	private String nodeID;
 	private JChannel chan;
 	private A3JGroup group;
-	private long timeout = 1000;
 	private ReplicatedHashMap<String, Address> map;
-	
-	/*
-	public void activate(A3JGroup group) throws Exception {
-		active = true;
-		chan = new JChannel();
-		chan.setReceiver(this);
-		chan.connect(group.getGroupName());
-		this.group = group;
-	}
-	*/
-	
-	public void activate(String groupName) throws Exception {
-		active = true;
-		chan = new JChannel();
-		chan.setReceiver(this);
-		chan.connect(groupName);
-		map = new ReplicatedHashMap<String, Address>(chan);
-		map.start(timeout);
-		if(map.get("supervisor")==null)
-			map.put("supervisor", chan.getAddress());
-		else
-			deactivate();
-			//try follower activation if exist
-	}
-	
-	public void deactivate() {
-		active=false;
-		chan.disconnect();
-		chan.close();
-	}
 
 	public int getResourceCost() {
 		return resourceCost;
@@ -82,6 +51,14 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public void setMap(ReplicatedHashMap<String, Address> map) {
+		this.map = map;
+	}
+
+	public ReplicatedHashMap<String, Address> getMap() {
+		return map;
 	}
 
 	public abstract void run();
