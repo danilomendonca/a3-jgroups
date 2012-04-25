@@ -31,10 +31,9 @@ public class RedFollower extends JGFollowerRole{
 
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
-		System.out.println(msg.getObject());
-		if(msg.getObject().equals("temperature")){
+		if(msg.getContent().equals("temperature")){
 			A3JGMessage mex = new A3JGMessage();
-			mex.setObject(temp);
+			mex.setContent(temp);
 			sendMessageToSupervisor(mex);
 		}
 	}

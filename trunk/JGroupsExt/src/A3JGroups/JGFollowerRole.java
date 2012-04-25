@@ -16,6 +16,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	private JChannel chan;
 	protected A3JGNode node;
 	private ReplicatedHashMap<String, Object> map;
+	private long electionTimeOut = 1000;
 	
 	public JGFollowerRole(int resourceCost, String groupName) {
 		super();
@@ -27,6 +28,10 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		return resourceCost;
 	}
 	
+	public void setElectionTimeOut(long electionTimeOut) {
+		this.electionTimeOut = electionTimeOut;
+	}
+
 	public void setResourceCost(int resourceCost) {
 		this.resourceCost = resourceCost;
 	}
@@ -63,19 +68,25 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	
 	public void receive(Message msg) {
 		if(msg.getObject().equals("fitnessFunction")){
+			int fitness;
 			if(node.getSupervisorRole(groupName)!=null)
-				msg.setObject(node.getSupervisorRole(groupName).fitnessFunc());
+				fitness = node.getSupervisorRole(groupName).fitnessFunc();
 			else
-				msg.setObject(0);
-			try {
-				msg.setObject("fitnessFunctionResult");
-				msg.setDest((Address) map.get("change"));
-				chan.send(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
+				fitness = 0;
+			if(fitness > ((Integer) map.get("value"))){
+				map.replace("value", fitness);
+				map.replace("newSup", chan.getAddress());
 			}
-		}else if(msg.getObject().equals("fitnessFunctionResult")){
-			//add in change riceve risultati della fitness (anche il suo???), se nessuno è abile chiudere cluster
+		}else if(msg.getObject().equals("NewSupervisor")){
+			if(map.putIfAbsent("supervisor", chan.getAddress())==null){
+				this.active=false;
+				node.getSupervisorRole(groupName).setActive(true);
+				node.getSupervisorRole(groupName).setChan(chan);
+				node.getSupervisorRole(groupName).setMap(map);
+				chan.setReceiver(node.getSupervisorRole(groupName));
+				new Thread(node.getSupervisorRole(groupName)).start();
+			}
+			
 		}else{
 			A3JGMessage mex = (A3JGMessage) msg.getObject();
 			messageFromSupervisor(mex);
@@ -83,19 +94,32 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	}
 	
 	public void viewAccepted(View view) {
-		System.out.println("there is a change");
-        if(!view.getMembers().contains(map.get("supervisor")))
+        if(!view.getMembers().contains(map.get("supervisor"))){
         	if(map.putIfAbsent("change", node.getChannels(groupName).getAddress())==null){
         		map.remove("supervisor");
-        		//invio richiesta per trovare nuovo supervisore
+        		map.put("value", 0);
+        		map.put("newSup", null);
         		Message msg = new Message(null, "fitnessFunction");
         		try {
         			this.chan.send(msg);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+        		try {
+					Thread.sleep(electionTimeOut);
+					if(((Integer) map.get("value"))!=0){
+						msg.setDest(((Address) map.get("newSup")));
+						msg.setObject("NewSupervisor");
+	        			chan.send(msg);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+        		
+        		
         		
         	}
+        }
     }
 	public boolean sendMessageToSupervisor(A3JGMessage mex){
 		try {

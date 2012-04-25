@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.jgroups.JChannel;
 import org.jgroups.Message;
+import org.jgroups.View;
 import org.jgroups.blocks.ReplicatedHashMap;
 
 public abstract class A3JGNode{
@@ -36,7 +37,7 @@ public abstract class A3JGNode{
 		return channels.get(groupName);
 	}
 
-	public void addSupervisorRole(String groupName, JGSupervisorRole role, String nodeID) {
+	public void addSupervisorRole(String groupName, JGSupervisorRole role) {
 		this.supervisorRoles.put(groupName, role);
 		role.setNode(this);
 	}
@@ -49,7 +50,7 @@ public abstract class A3JGNode{
 		return followerRoles.get(groupName);
 	}
 	
-	public void addFollowerRole(String groupName, JGFollowerRole role, String nodeID) {
+	public void addFollowerRole(String groupName, JGFollowerRole role) {
 		this.followerRoles.put(groupName, role);
 		role.setNode(this);
 	}
@@ -67,12 +68,18 @@ public abstract class A3JGNode{
 		channels.put(groupName, chan);
 		chan.connect(groupName);
 	    ReplicatedHashMap<String, Object> map = new ReplicatedHashMap<String, Object>(chan){
+	    	
 	    	public void receive(Message m){
 	    		chan.getReceiver().receive(m);
 	    	}
+	    	
+	    	public void viewAccepted(View v){
+	    		chan.getReceiver().viewAccepted(v);
+	    	}
 	    };
 	    map.start(timeout);
-	    
+	    GenericRole generic = new GenericRole(this, groupName, chan, map);
+	    chan.setReceiver(generic);
 		if(map.get("supervisor")==null){
 			if(this.getSupervisorRole(groupName)!=null){
 				if(map.putIfAbsent("supervisor", chan.getAddress())==null){
