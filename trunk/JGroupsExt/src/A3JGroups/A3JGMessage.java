@@ -6,17 +6,9 @@ import org.jgroups.Message;
 public class A3JGMessage extends Message{
 
 
-	private Object content;
 	//true if is an update message, false otherwise
 	private boolean type;
-	
-	public A3JGMessage(Object content) {
-		this.content = content;
-	}
-
-	public Object getContent() {
-		return content;
-	}
+	private boolean sender;
 
 	public boolean getType() {
 		return type;
@@ -24,6 +16,14 @@ public class A3JGMessage extends Message{
 
 	public void setType(boolean type) {
 		this.type = type;
+	}
+
+	public boolean getSender() {
+		return sender;
+	}
+
+	public void setSender(boolean sender) {
+		this.sender = sender;
 	}
 	
 }

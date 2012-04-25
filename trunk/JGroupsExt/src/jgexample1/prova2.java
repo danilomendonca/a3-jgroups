@@ -7,10 +7,9 @@ public class prova2 {
 	 */
 	public static void main(String[] args) throws Exception {
 		RedNode nodo1 = new RedNode("red1");
-		RedFollower red = new RedFollower();
+		RedFollower red = new RedFollower(1, "red");
 		nodo1.addFollowerRole("red", red, "red1");
-		nodo1.getFollowerRole("red").activate("red");
-		new Thread(nodo1.getFollowerRole("red")).start();
+		nodo1.joinGroup("red");
 	}
 
 }
