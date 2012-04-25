@@ -1,14 +1,16 @@
 package A3JGroups;
 
 
-import org.jgroups.Message;
-
-public class A3JGMessage extends Message{
+import java.io.Serializable;
 
 
+public class A3JGMessage implements Serializable{
+
+
+	private static final long serialVersionUID = 1L;
 	//true if is an update message, false otherwise
 	private boolean type;
-	private boolean sender;
+	private Object content;
 
 	public boolean getType() {
 		return type;
@@ -18,12 +20,12 @@ public class A3JGMessage extends Message{
 		this.type = type;
 	}
 
-	public boolean getSender() {
-		return sender;
+	public Object getContent() {
+		return content;
 	}
 
-	public void setSender(boolean sender) {
-		this.sender = sender;
+	public void setContent(Object content) {
+		this.content = content;
 	}
-	
+
 }

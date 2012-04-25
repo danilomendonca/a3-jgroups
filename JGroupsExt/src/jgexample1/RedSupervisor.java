@@ -29,7 +29,7 @@ public class RedSupervisor extends JGSupervisorRole {
 			}
 			
 			A3JGMessage msg = new A3JGMessage();
-			msg.setObject("temperature");
+			msg.setContent("temperature");
 			sendMessageToFollower(msg);
 			System.out.println("["+this.getNode().getID()+"] Sending message to followers...  " + (vista.getMembers().size()-1));
 			
@@ -39,7 +39,7 @@ public class RedSupervisor extends JGSupervisorRole {
 
 	@Override
 	public void messageFromFollower(A3JGMessage msg) {
-		temp.add((Integer) msg.getObject());
+		temp.add((Integer) msg.getContent());
 		if(temp.size()==(vista.getMembers().size()-1)){
 			int avarage = 0;
 			for(int i=0;i<(vista.getMembers().size()-1);i++){
