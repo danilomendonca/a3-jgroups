@@ -1,7 +1,6 @@
 package jgexample1;
 
 
-import org.jgroups.View;
 
 import A3JGroups.A3JGMessage;
 import A3JGroups.JGFollowerRole;
@@ -10,29 +9,32 @@ public class RedFollower extends JGFollowerRole{
 
 	private int temp;
 	
+	public RedFollower(int resourceCost, String groupName) {
+		super(resourceCost, groupName);
+	}
+
 	@Override
 	public void run() {
 		
 		while (this.active) {
-			/*
+			
 			temp = (int) (Math.random()*35);
-			System.out.println(this.getNodeID()+" "+temp);
-			*/
+			System.out.println(this.getNode().getID()+" "+temp);
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(1500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			
-			View vista = this.getChan().getView();
-			System.out.println(vista.getMembers());
 		}
 	}
 
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
-		if(msg.getContent().equals("temperature")){
-			A3JGMessage mex = new A3JGMessage(temp);
+		System.out.println(msg.getObject());
+		if(msg.getObject().equals("temperature")){
+			A3JGMessage mex = new A3JGMessage();
+			mex.setObject(temp);
 			sendMessageToSupervisor(mex);
 		}
 	}

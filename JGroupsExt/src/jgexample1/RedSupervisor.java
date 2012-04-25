@@ -9,60 +9,59 @@ import A3JGroups.JGSupervisorRole;
 
 public class RedSupervisor extends JGSupervisorRole {
 
+	public RedSupervisor(int resourceCost, String groupName) {
+		super(resourceCost, groupName);
+	}
+
 	private ArrayList<Integer> temp = new ArrayList<Integer>();
-	private int groupSize = 0;
+	private View vista;
 	
 	@Override
 	public void run() {
 		
 		while (this.active) {
-			
+			vista = this.node.getChannels("red").getView();
 			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
+				Thread.sleep(2000);
+
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			View vista = this.getChan().getView();
-			System.out.println(vista.getMembers());
-			/*
-			A3JGMessage msg = new A3JGMessage("temperature");
+			A3JGMessage msg = new A3JGMessage();
+			msg.setObject("temperature");
 			sendMessageToFollower(msg);
-			System.out.println("["+this.getNodeID()+"] Sending message to followers...  " + groupSize);
-			*/
+			System.out.println("["+this.getNode().getID()+"] Sending message to followers...  " + (vista.getMembers().size()-1));
+			
 			
 		}
 	}
 
-	
-	
 	@Override
 	public void messageFromFollower(A3JGMessage msg) {
-		temp.add((Integer) msg.getContent());
-		if(temp.size()==groupSize){
+		temp.add((Integer) msg.getObject());
+		if(temp.size()==(vista.getMembers().size()-1)){
 			int avarage = 0;
-			for(int i=0;i<groupSize;i++){
+			for(int i=0;i<(vista.getMembers().size()-1);i++){
 				avarage += temp.get(i);
 			}
-			avarage = (avarage/groupSize);
+			avarage = (avarage/(vista.getMembers().size()-1));
 			temp = new ArrayList<Integer>();
-			System.out.println(this.getNodeID()+" The average temperature is " + avarage);
-		}		
+			System.out.println(this.getNode().getID()+" The average temperature is " + avarage);
+			
+		}
 	}
 
 	@Override
 	public void updateFromFollower(A3JGMessage msg) {
-		System.out.println(this.getNodeID()+"  has recived update from someone");
-		if(msg.getContent().equals("join"))
-			groupSize++;
-		else
-			groupSize--;
+		System.out.println(this.getNode().getID()+"  has recived update from someone");
 	}
 
 	@Override
 	public int fitnessFunc() {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return 2;
 	}
+
 
 }

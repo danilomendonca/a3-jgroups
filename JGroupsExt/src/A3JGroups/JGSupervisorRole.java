@@ -12,11 +12,18 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 
 	protected boolean active;
 	private int resourceCost;
-	private String nodeID;
+	private String groupName;
 	private JChannel chan;
-	private A3JGroup group;
-	private ReplicatedHashMap<String, Address> map;
+	protected A3JGNode node;
+	private ReplicatedHashMap<String, Object> map;
+	
 
+	public JGSupervisorRole(int resourceCost, String groupName) {
+		super();
+		this.resourceCost = resourceCost;
+		this.groupName = groupName;
+	}
+	
 	public int getResourceCost() {
 		return resourceCost;
 	}
@@ -24,15 +31,23 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	public void setResourceCost(int resourceCost) {
 		this.resourceCost = resourceCost;
 	}
-
-	public String getNodeID() {
-		return nodeID;
-	}
-
-	public void setNodeID(String nodeID) {
-		this.nodeID = nodeID;
-	}
  
+	public A3JGNode getNode() {
+		return node;
+	}
+
+	public void setNode(A3JGNode node) {
+		this.node = node;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	public JChannel getChan() {
 		return chan;
 	}
@@ -41,42 +56,32 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		this.chan = chan;
 	}
 	
-	public void setGroup(A3JGroup group){
-		this.group = group;
-	}
-
-	public A3JGroup getGroup() {
-		return group;
-	}
-	
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
-	public void setMap(ReplicatedHashMap<String, Address> map) {
+	public void setMap(ReplicatedHashMap<String, Object> map) {
 		this.map = map;
-	}
-
-	public ReplicatedHashMap<String, Address> getMap() {
-		return map;
 	}
 
 	public abstract void run();
 	
 	public void receive(Message msg) {
 		A3JGMessage mex = (A3JGMessage) msg.getObject();
-	
-		if(mex.getType()){
+
+		if (mex.getType()) {
 			updateFromFollower(mex);
-		}else
-			messageFromFollower(mex);	
+		} else
+			messageFromFollower(mex);
 	}
 	
 	public boolean sendMessageToFollower(A3JGMessage mex){
 		mex.setType(false);
-		Message msg = new Message(null, mex);
+		Message msg = new Message();
+		msg.setObject(mex);
 			try {
-				chan.send(msg);
+				for(Address ad: this.chan.getView().getMembers()){
+					if(ad!=this.chan.getAddress()){
+						msg.setDest(ad);
+						this.chan.send(msg);
+					}
+				}
 			} catch (Exception e) {
 				return false;
 			}
@@ -86,5 +91,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	public abstract void messageFromFollower(A3JGMessage msg);
 	public abstract void updateFromFollower(A3JGMessage msg);
 	public abstract int fitnessFunc();
+
+	
 	
 }

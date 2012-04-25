@@ -1,15 +1,11 @@
 package jgexample2;
 
-import A3JGroups.A3JGMiddleware;
-
 
 public class Launch2 {
 
 	public static void main(String[] args){
 		
 		try {
-
-			A3JGMiddleware middleware = new A3JGMiddleware();
 
 			MixedNode node1 = new MixedNode(middleware, "red1");
 			node1.addSupervisorRole("red", new RedSupervisor(), node1.getID());
