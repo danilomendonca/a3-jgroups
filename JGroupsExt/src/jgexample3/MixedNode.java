@@ -1,14 +1,13 @@
 package jgexample3;
 
-import A3JGroups.A3JGMiddleware;
 import A3JGroups.A3JGNode;
 
 
 
 public class MixedNode extends A3JGNode {
 
-	public MixedNode(A3JGMiddleware middleware, String ID) {
-		super(ID, middleware);
+	public MixedNode(String ID) {
+		super(ID);
 		
 	}
 
