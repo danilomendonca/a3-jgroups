@@ -15,6 +15,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	private String groupName;
 	private JChannel chan;
 	protected A3JGNode node;
+	@SuppressWarnings("unused")
 	private ReplicatedHashMap<String, Object> map;
 	
 
@@ -84,6 +85,8 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 					if(!ad.equals(this.chan.getAddress())){
 						msg.setDest(ad);
 						this.chan.send(msg);
+					}else{
+						;
 					}
 				}
 			} catch (Exception e) {

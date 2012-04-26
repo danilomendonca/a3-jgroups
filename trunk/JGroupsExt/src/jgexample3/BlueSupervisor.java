@@ -1,23 +1,31 @@
 package jgexample3;
 
+import org.jgroups.View;
+
 import A3JGroups.A3JGMessage;
 import A3JGroups.JGSupervisorRole;
 
 
 public class BlueSupervisor extends JGSupervisorRole {
-
+	
+	private int fitness = 2;
+	private int people = 0;
+	private int n = 0;
+	private View vista;
+	
 	public BlueSupervisor(int resourceCost, String groupName) {
 		super(resourceCost, groupName);
 	}
 
-	private int people = 0;
-	private int n = 0;
+	public void setFitness(int fitness) {
+		this.fitness = fitness;
+	}
 	
 	@Override
 	public void run() {
 		
 				while (this.active) {
-					
+					vista = this.node.getChannels("blue").getView();
 					try {
 						Thread.sleep(3000);
 					} catch (InterruptedException e) {
@@ -25,7 +33,7 @@ public class BlueSupervisor extends JGSupervisorRole {
 						e.printStackTrace();
 					}
 					
-					System.out.println("["+this.getNode().getID()+"] Sending message to blue followers... "+(this.getChan().getView().getMembers().size()-1));
+					System.out.println("["+this.getNode().getID()+"] Sending message to blue followers... "+(vista.getMembers().size()-1));
 					A3JGMessage msg = new A3JGMessage();
 					msg.setContent("people");
 					sendMessageToFollower(msg);
@@ -37,9 +45,10 @@ public class BlueSupervisor extends JGSupervisorRole {
 	public void messageFromFollower(A3JGMessage msg) {
 		people += (Integer) msg.getContent();
 		n++;
-		if(n==(this.getChan().getView().getMembers().size()-1)){
+		if(n==(vista.getMembers().size()-1)){
 			System.out.println("["+this.getNode().getID()+"] The total number of people is " + people);
 			n=0;
+			people=0;
 		}		
 	}
 
@@ -51,9 +60,9 @@ public class BlueSupervisor extends JGSupervisorRole {
 
 	@Override
 	public int fitnessFunc() {
-		// TODO Auto-generated method stub
-		return 3;
+		return fitness;
 	}
+
 
 
 }

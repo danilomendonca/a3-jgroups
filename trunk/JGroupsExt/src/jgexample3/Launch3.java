@@ -53,7 +53,7 @@ public class Launch3 {
 			node7.joinGroup("red");
 
 			Thread.sleep(10000);
-
+			System.out.println("killing blue     **********************************          *********************");
 			node1.terminate("blue");
 			node5.terminate("red");
 
