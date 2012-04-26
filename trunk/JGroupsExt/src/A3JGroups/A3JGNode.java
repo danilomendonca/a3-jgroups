@@ -124,10 +124,10 @@ public abstract class A3JGNode{
 		channels.remove(groupName);
 	}
 	
-	public void terminate(String groupName, boolean role){
-		if(role){
+	public void terminate(String groupName){
+		if(this.getSupervisorRole(groupName)!=null && this.getSupervisorRole(groupName).isActive()){
 			this.getSupervisorRole(groupName).setActive(false);
-		}else
+		}else if(this.getFollowerRole(groupName)!=null && this.getFollowerRole(groupName).isActive())
 			this.getFollowerRole(groupName).setActive(false);
 		close(groupName);
 	}

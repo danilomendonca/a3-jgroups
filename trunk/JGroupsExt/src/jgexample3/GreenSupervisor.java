@@ -6,10 +6,13 @@ import A3JGroups.JGSupervisorRole;
 
 public class GreenSupervisor extends JGSupervisorRole {
 
-	private int groupSize = 0;
 	private int n = 0;
 	private int pc = 0;
 	
+	public GreenSupervisor(int resourceCost, String groupName) {
+		super(resourceCost, groupName);
+	}
+
 	@Override
 	public void run() {
 		while (this.active) {
@@ -19,27 +22,30 @@ public class GreenSupervisor extends JGSupervisorRole {
 				e.printStackTrace();
 			}
 			
-			A3JGMessage msg = new A3JGMessage("computer");
+			A3JGMessage msg = new A3JGMessage();
+			msg.setContent("computer");
 			sendMessageToFollower(msg);
-			System.out.println("["+this.getNodeID()+"] Sending message to green followers...  " + groupSize);
+			System.out.println("["+this.getNode().getID()+"] Sending message to green followers...  " + (this.getChan().getView().getMembers().size()-1));
 		}
 	}
 
 	@Override
 	public void messageFromFollower(A3JGMessage msg) {
 		pc += (Integer) msg.getContent();
-		if(n==groupSize){
-			System.out.println("["+this.getNodeID()+"] The total number of computers on is " + pc);
+		if(n==(this.getChan().getView().getMembers().size()-1)){
+			System.out.println("["+this.getNode().getID()+"] The total number of computers on is " + pc);
 		}	
 		
 	}
 
 	@Override
 	public void updateFromFollower(A3JGMessage msg) {
-		if(msg.getContent().equals("join"))
-			groupSize++;
-		else
-			groupSize--;	
+		System.out.println("update from someone");	
+	}
+
+	@Override
+	public int fitnessFunc() {
+		return 4;
 	}
 
 	

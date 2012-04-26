@@ -22,12 +22,12 @@ public class Launch {
 			
 			Thread.sleep(10000);
 			
-			node1.terminate("red", true);
+			node1.terminate("red");
 			
 			
 			Thread.sleep(10000);
 			
-			node3.terminate("red", true);	 
+			node3.terminate("red");	 
 
 			Thread.sleep(5000);
 			

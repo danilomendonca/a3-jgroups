@@ -52,6 +52,10 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		this.active = active;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+	
 	public JChannel getChan() {
 		return chan;
 	}
@@ -92,7 +96,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 			}
 			
 		}else if(msg.getContent().equals("Deactivate")){
-			node.terminate(groupName, false);
+			node.terminate(groupName);
 		}
 		else{
 			messageFromSupervisor(msg);

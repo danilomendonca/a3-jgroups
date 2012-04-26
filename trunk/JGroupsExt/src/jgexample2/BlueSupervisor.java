@@ -6,9 +6,12 @@ import A3JGroups.JGSupervisorRole;
 
 public class BlueSupervisor extends JGSupervisorRole {
 
+	public BlueSupervisor(int resourceCost, String groupName) {
+		super(resourceCost, groupName);
+	}
+
 	private int people = 0;
 	private int n = 0;
-	private int groupSize = 0;
 	
 	@Override
 	public void run() {
@@ -22,8 +25,9 @@ public class BlueSupervisor extends JGSupervisorRole {
 						e.printStackTrace();
 					}
 					
-					System.out.println("["+this.getNodeID()+"] Sending message to blue followers... "+groupSize);
-					A3JGMessage msg = new A3JGMessage("people");
+					System.out.println("["+this.getNode().getID()+"] Sending message to blue followers... "+(this.getChan().getView().getMembers().size()-1));
+					A3JGMessage msg = new A3JGMessage();
+					msg.setContent("people");
 					sendMessageToFollower(msg);
 				
 				}
@@ -33,19 +37,22 @@ public class BlueSupervisor extends JGSupervisorRole {
 	public void messageFromFollower(A3JGMessage msg) {
 		people += (Integer) msg.getContent();
 		n++;
-		if(n==groupSize){
-			System.out.println("["+this.getNodeID()+"] The total number of people is " + people);
+		if(n==(this.getChan().getView().getMembers().size()-1)){
+			System.out.println("["+this.getNode().getID()+"] The total number of people is " + people);
 			n=0;
 		}		
 	}
 
 	@Override
 	public void updateFromFollower(A3JGMessage msg) {
-		if(msg.getContent().equals("join"))
-			groupSize++;
-		else
-			groupSize--;
+		System.out.println("update from someone");
 		
+	}
+
+	@Override
+	public int fitnessFunc() {
+		// TODO Auto-generated method stub
+		return 3;
 	}
 
 

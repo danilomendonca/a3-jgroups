@@ -7,6 +7,11 @@ import A3JGroups.JGFollowerRole;
 
 public class GreenFollower extends JGFollowerRole {
 	
+	public GreenFollower(int resourceCost, String groupName) {
+		super(resourceCost, groupName);
+		// TODO Auto-generated constructor stub
+	}
+
 	private int pc;
 	
 	@Override
@@ -15,7 +20,7 @@ public class GreenFollower extends JGFollowerRole {
 		while (this.active) {
 			
 			pc = (int) (Math.random()*35);
-			System.out.println("["+this.getNodeID()+"] number of computers on: "+pc);
+			System.out.println("["+this.getNode().getID()+"] number of computers on: "+pc);
 			
 			try {
 				Thread.sleep(2500);
@@ -28,7 +33,8 @@ public class GreenFollower extends JGFollowerRole {
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
 		if(msg.getContent().equals("computer")){
-			A3JGMessage mex = new A3JGMessage(pc);
+			A3JGMessage mex = new A3JGMessage();
+			mex.setContent(pc);
 			sendMessageToSupervisor(mex);
 		}
 		

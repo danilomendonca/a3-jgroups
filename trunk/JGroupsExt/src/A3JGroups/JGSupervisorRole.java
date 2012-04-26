@@ -48,6 +48,10 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		this.active = active;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
 	public JChannel getChan() {
 		return chan;
 	}

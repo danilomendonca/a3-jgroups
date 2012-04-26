@@ -6,6 +6,10 @@ import A3JGroups.JGFollowerRole;
 
 public class BlueFollower extends JGFollowerRole {
 
+	public BlueFollower(int resourceCost, String groupName) {
+		super(resourceCost, groupName);
+	}
+
 	private int people;
 	
 	@Override
@@ -14,7 +18,7 @@ public class BlueFollower extends JGFollowerRole {
 		while (this.active) {
 			
 			people = (int) (Math.random()*35);
-			System.out.println("["+this.getNodeID()+"] number of people: "+people);
+			System.out.println("["+this.getNode().getID()+"] number of people: "+people);
 			
 			try {
 				Thread.sleep(2500);
@@ -27,7 +31,8 @@ public class BlueFollower extends JGFollowerRole {
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
 		if(msg.getContent().equals("people")){
-			A3JGMessage mex = new A3JGMessage(people);
+			A3JGMessage mex = new A3JGMessage();
+			mex.setContent(people);
 			sendMessageToSupervisor(mex);
 		}
 	}
