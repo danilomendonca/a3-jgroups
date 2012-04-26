@@ -73,18 +73,22 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 				fitness = node.getSupervisorRole(groupName).fitnessFunc();
 			else
 				fitness = 0;
-			if(fitness > ((Integer) map.get("value"))){
+			if(map.get("supervisor")==null && fitness > ((Integer) map.get("value")) ){
 				map.replace("value", fitness);
 				map.replace("newSup", chan.getAddress());
 			}
 		}else if(msg.getObject().equals("NewSupervisor")){
 			if(map.putIfAbsent("supervisor", chan.getAddress())==null){
 				this.active=false;
+				System.out.println(node.getSupervisorRole(groupName));
 				node.getSupervisorRole(groupName).setActive(true);
 				node.getSupervisorRole(groupName).setChan(chan);
 				node.getSupervisorRole(groupName).setMap(map);
 				chan.setReceiver(node.getSupervisorRole(groupName));
 				new Thread(node.getSupervisorRole(groupName)).start();
+				map.remove("value");
+				map.remove("newSup");
+				map.remove("change");
 			}
 			
 		}else{
@@ -96,6 +100,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	public void viewAccepted(View view) {
         if(!view.getMembers().contains(map.get("supervisor"))){
         	if(map.putIfAbsent("change", node.getChannels(groupName).getAddress())==null){
+        		System.out.println("putting    "+node.getID());
         		map.remove("supervisor");
         		map.put("value", 0);
         		map.put("newSup", null);
@@ -111,6 +116,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 						msg.setDest(((Address) map.get("newSup")));
 						msg.setObject("NewSupervisor");
 	        			chan.send(msg);
+	        			System.out.println("sending mex    "+node.getID());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

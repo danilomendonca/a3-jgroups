@@ -88,6 +88,9 @@ public abstract class A3JGNode{
 					this.getSupervisorRole(groupName).setMap(map);
 					chan.setReceiver(this.getSupervisorRole(groupName));
 					new Thread(this.getSupervisorRole(groupName)).start();
+					map.remove("value");
+					map.remove("newSup");
+					map.remove("change");
 					return true;
 				}else{
 					if(this.getFollowerRole(groupName)!=null){
