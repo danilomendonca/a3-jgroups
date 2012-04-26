@@ -7,39 +7,39 @@ public class Launch2 {
 		
 		try {
 
-			MixedNode node1 = new MixedNode(middleware, "red1");
-			node1.addSupervisorRole("red", new RedSupervisor(), node1.getID());
-			node1.setup("red");
+			MixedNode node1 = new MixedNode("red1");
+			node1.addSupervisorRole("red", new RedSupervisor(1, "red"));
+			node1.joinGroup("red");
 
 			MixedNode node2 = new MixedNode(middleware, "red2");
-			node2.addFollowerRole("red", new RedFollower(), node2.getID());
-			node2.setup("red");
+			node2.addFollowerRole("red", new RedFollower(1,"red"));
+			node2.joinGroup("red");
 
 			Thread.sleep(10000);
 
 			MixedNode node3 = new MixedNode(middleware, "red3");
 			node3.addSupervisorRole("red", new RedSupervisor(), node3.getID());
 			node3.addFollowerRole("red", new RedFollower(), node3.getID());
-			node3.setup("red");
+			node3.joinGroup("red");
 
 			MixedNode node4 = new MixedNode(middleware, "blue1");
 			node4.addSupervisorRole("blue", new BlueSupervisor(), node4.getID());
-			node4.setup("blue");
+			node4.joinGroup("blue");
 
 			MixedNode node5 = new MixedNode(middleware, "blue2");
 			node5.addFollowerRole("blue", new BlueFollower(), node5.getID());
-			node5.setup("blue");
+			node5.joinGroup("blue");
 
 			Thread.sleep(10000);
 
-			node1.exit("red");
+			node1.terminate("red", true);
 
 			MixedNode node6 = new MixedNode(middleware, "blue&red");
 			node6.addFollowerRole("blue", new BlueFollower(), node6.getID());
 			node6.addSupervisorRole("red", new RedSupervisor(), node6.getID());
 			node6.addFollowerRole("red", new RedFollower(), node6.getID());
-			node6.setup("blue");
-			node6.setup("red");
+			node6.joinGroup("blue");
+			node6.joinGroup("red");
 
 			Thread.sleep(10000);
 

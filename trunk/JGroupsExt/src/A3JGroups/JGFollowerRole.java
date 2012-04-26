@@ -66,67 +66,73 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	
 	public abstract void run();
 	
-	public void receive(Message msg) {
-		if(msg.getObject().equals("fitnessFunction")){
+	public void receive(Message mex) {
+		A3JGMessage msg = (A3JGMessage) mex.getObject();
+		if(msg.getContent().equals("fitnessFunction")){
 			int fitness;
 			if(node.getSupervisorRole(groupName)!=null)
 				fitness = node.getSupervisorRole(groupName).fitnessFunc();
 			else
 				fitness = 0;
 			if(map.get("supervisor")==null && fitness > ((Integer) map.get("value")) ){
-				map.replace("value", fitness);
-				map.replace("newSup", chan.getAddress());
+				map.put("value", fitness);
+				map.put("newSup", chan.getAddress());
 			}
-		}else if(msg.getObject().equals("NewSupervisor")){
+		}else if(msg.getContent().equals("NewSupervisor")){
 			if(map.putIfAbsent("supervisor", chan.getAddress())==null){
 				this.active=false;
-				System.out.println(node.getSupervisorRole(groupName));
 				node.getSupervisorRole(groupName).setActive(true);
 				node.getSupervisorRole(groupName).setChan(chan);
 				node.getSupervisorRole(groupName).setMap(map);
 				chan.setReceiver(node.getSupervisorRole(groupName));
 				new Thread(node.getSupervisorRole(groupName)).start();
-				map.remove("value");
-				map.remove("newSup");
-				map.remove("change");
+				map.put("value", 0);
+				map.put("newSup", null);
+				map.put("change", null);
 			}
 			
-		}else{
-			A3JGMessage mex = (A3JGMessage) msg.getObject();
-			messageFromSupervisor(mex);
+		}else if(msg.getContent().equals("Deactivate")){
+			node.terminate(groupName, false);
+		}
+		else{
+			messageFromSupervisor(msg);
 		}
 	}
 	
 	public void viewAccepted(View view) {
-        if(!view.getMembers().contains(map.get("supervisor"))){
-        	if(map.putIfAbsent("change", node.getChannels(groupName).getAddress())==null){
-        		System.out.println("putting    "+node.getID());
-        		map.remove("supervisor");
-        		map.put("value", 0);
-        		map.put("newSup", null);
-        		Message msg = new Message(null, "fitnessFunction");
-        		try {
-        			this.chan.send(msg);
-				} catch (Exception e) {
-					e.printStackTrace();
+		if (!view.getMembers().contains(map.get("supervisor")) && view.getMembers().get(0).equals(chan.getAddress())) {
+			map.put("change", chan.getAddress());
+			map.put("value", 0);
+			map.put("newSup", null);
+			map.remove("supervisor");
+			A3JGMessage mex = new A3JGMessage();
+			mex.setContent("fitnessFunction");
+			Message msg = new Message(null, mex);
+			try {
+				this.chan.send(msg);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				Thread.sleep(electionTimeOut);
+				if (((Integer) map.get("value")) > 0) {
+					mex.setContent("NewSupervisor");
+					Message msg2 = new Message(null, mex);
+					msg2.setDest(((Address) map.get("newSup")));
+					msg2.setObject(mex);
+					chan.send(msg2);
+				} else {
+					mex.setContent("Deactivate");
+					Message msg3 = new Message(null, mex);
+					chan.send(msg3);
+
 				}
-        		try {
-					Thread.sleep(electionTimeOut);
-					if(((Integer) map.get("value"))!=0){
-						msg.setDest(((Address) map.get("newSup")));
-						msg.setObject("NewSupervisor");
-	        			chan.send(msg);
-	        			System.out.println("sending mex    "+node.getID());
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-        		
-        		
-        		
-        	}
-        }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
     }
+	
 	public boolean sendMessageToSupervisor(A3JGMessage mex){
 		try {
 			Message msg = new Message((Address) map.get("supervisor"), mex);

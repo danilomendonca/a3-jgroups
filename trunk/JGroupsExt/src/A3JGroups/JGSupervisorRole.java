@@ -77,7 +77,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		msg.setObject(mex);
 			try {
 				for(Address ad: this.chan.getView().getMembers()){
-					if(ad!=this.chan.getAddress()){
+					if(!ad.equals(this.chan.getAddress())){
 						msg.setDest(ad);
 						this.chan.send(msg);
 					}
