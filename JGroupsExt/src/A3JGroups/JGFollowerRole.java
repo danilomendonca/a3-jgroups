@@ -109,23 +109,27 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 			map.put("value", 0);
 			map.put("newSup", null);
 			map.remove("supervisor");
-			A3JGMessage mex = new A3JGMessage();
-			mex.setContent("fitnessFunction");
-			Message msg = new Message(null, mex);
+			
 			try {
-				this.chan.send(msg);
+					A3JGMessage mex = new A3JGMessage();
+					mex.setContent("fitnessFunction");
+					Message msg = new Message(null, mex);
+					this.chan.send(msg);
+			
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			try {
 				Thread.sleep(electionTimeOut);
 				if (((Integer) map.get("value")) > 0) {
+					A3JGMessage mex = new A3JGMessage();
 					mex.setContent("NewSupervisor");
 					Message msg2 = new Message(null, mex);
 					msg2.setDest(((Address) map.get("newSup")));
 					msg2.setObject(mex);
 					chan.send(msg2);
 				} else {
+					A3JGMessage mex = new A3JGMessage();
 					mex.setContent("Deactivate");
 					Message msg3 = new Message(null, mex);
 					chan.send(msg3);

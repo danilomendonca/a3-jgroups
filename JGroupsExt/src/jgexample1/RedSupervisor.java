@@ -9,13 +9,19 @@ import A3JGroups.JGSupervisorRole;
 
 public class RedSupervisor extends JGSupervisorRole {
 
+	
+	private int fitness = 2;
+	private ArrayList<Integer> temp = new ArrayList<Integer>();
+	private View vista;
+	
 	public RedSupervisor(int resourceCost, String groupName) {
 		super(resourceCost, groupName);
 	}
 
-	private ArrayList<Integer> temp = new ArrayList<Integer>();
-	private View vista;
-	
+	public void setFitness(int fitness) {
+		this.fitness = fitness;
+	}
+
 	@Override
 	public void run() {
 		
@@ -59,8 +65,7 @@ public class RedSupervisor extends JGSupervisorRole {
 
 	@Override
 	public int fitnessFunc() {
-		
-		return 2;
+		return fitness;
 	}
 
 
