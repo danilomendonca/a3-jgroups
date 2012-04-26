@@ -2,28 +2,36 @@ package jgexample2;
 
 import java.util.ArrayList;
 
+import org.jgroups.View;
+
 import A3JGroups.A3JGMessage;
 import A3JGroups.JGSupervisorRole;
 
 public class RedSupervisor extends JGSupervisorRole {
 
+	public RedSupervisor(int resourceCost, String groupName) {
+		super(resourceCost, groupName);
+	}
+
 	private ArrayList<Integer> temp = new ArrayList<Integer>();
-	private int groupSize = 0;
+	private View vista;
 	
 	@Override
 	public void run() {
 		
 		while (this.active) {
-			
+			vista = this.node.getChannels("red").getView();
 			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
+				Thread.sleep(2000);
+
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			A3JGMessage msg = new A3JGMessage("temperature");
+			A3JGMessage msg = new A3JGMessage();
+			msg.setContent("temperature");
 			sendMessageToFollower(msg);
-			System.out.println("["+this.getNodeID()+"] Sending message to red followers...  " + groupSize);
+			System.out.println("["+this.getNode().getID()+"] Sending message to followers...  " + (vista.getMembers().size()-1));
 			
 			
 		}
@@ -32,23 +40,28 @@ public class RedSupervisor extends JGSupervisorRole {
 	@Override
 	public void messageFromFollower(A3JGMessage msg) {
 		temp.add((Integer) msg.getContent());
-		if(temp.size()==groupSize){
+		if(temp.size()==(vista.getMembers().size()-1)){
 			int avarage = 0;
-			for(int i=0;i<groupSize;i++){
+			for(int i=0;i<(vista.getMembers().size()-1);i++){
 				avarage += temp.get(i);
 			}
-			avarage = (avarage/groupSize);
+			avarage = (avarage/(vista.getMembers().size()-1));
 			temp = new ArrayList<Integer>();
-			System.out.println("["+this.getNodeID()+"] The average temperature is " + avarage);
-		}		
+			System.out.println(this.getNode().getID()+" The average temperature is " + avarage);
+			
+		}
 	}
 
 	@Override
 	public void updateFromFollower(A3JGMessage msg) {
-		if(msg.getContent().equals("join"))
-			groupSize++;
-		else
-			groupSize--;
+		System.out.println(this.getNode().getID()+"  has recived update from someone");
 	}
+
+	@Override
+	public int fitnessFunc() {
+		
+		return 2;
+	}
+
 
 }
