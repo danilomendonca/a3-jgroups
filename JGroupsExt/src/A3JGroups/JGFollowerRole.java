@@ -162,6 +162,11 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		return true;
 	}
 	
+	public Object getMessageOverTime(){
+		A3JGMessage msg = (A3JGMessage) map.get("message");
+		return msg.getContent();
+	}
+	
 	public abstract void messageFromSupervisor(A3JGMessage msg);
 
 		
