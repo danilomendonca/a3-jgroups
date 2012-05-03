@@ -17,6 +17,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	protected A3JGNode node;
 	private ReplicatedHashMap<String, Object> map;
 	private long electionTimeOut = 1000;
+	private boolean election = false;
 	
 	public JGFollowerRole(int resourceCost, String groupName) {
 		super();
@@ -73,16 +74,18 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	public void receive(Message mex) {
 		A3JGMessage msg = (A3JGMessage) mex.getObject();
 		if(msg.getContent().equals("fitnessFunction")){
+			System.out.println("node  fitness "+ node.getID());
 			int fitness;
 			if(node.getSupervisorRole(groupName)!=null)
 				fitness = node.getSupervisorRole(groupName).fitnessFunc();
 			else
 				fitness = 0;
-			if(map.get("supervisor")==null && fitness > ((Integer) map.get("value")) ){
-				map.put("value", fitness);
-				map.put("newSup", chan.getAddress());
-			}
+			
+			map.put(chan.getAddressAsString(), fitness);
+			
 		}else if(msg.getContent().equals("NewSupervisor")){
+
+			System.out.println("ricevuto il mex" + node.getID());
 			if(map.putIfAbsent("supervisor", chan.getAddress())==null){
 				this.active=false;
 				node.getSupervisorRole(groupName).setActive(true);
@@ -95,10 +98,31 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 				map.put("change", null);
 			}
 			
+		}else if(msg.getContent().equals("TerminateElection")){
+			node.terminate(groupName);
+			election = false;
+			
 		}else if(msg.getContent().equals("Deactivate")){
 			node.terminate(groupName);
-		}
-		else{
+		
+		}else if(((String) msg.getContent()).contains("MergeGroup")){
+			String group = ((String) msg.getContent()).substring(9);
+			try {
+				node.joinGroup(group);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			node.terminate(groupName);
+			
+		}else if(((String) msg.getContent()).contains("JoinGroup")){
+			String group = ((String) msg.getContent()).substring(9);
+			try {
+				node.joinGroup(group);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}else{
 			messageFromSupervisor(msg);
 		}
 	}
@@ -106,34 +130,47 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	public void viewAccepted(View view) {
 		if (!view.getMembers().contains(map.get("supervisor")) && view.getMembers().get(0).equals(chan.getAddress())) {
 			map.put("change", chan.getAddress());
-			map.put("value", 0);
-			map.put("newSup", null);
 			map.remove("supervisor");
-			
+			election = true;
 			try {
+					
 					A3JGMessage mex = new A3JGMessage();
 					mex.setContent("fitnessFunction");
 					Message msg = new Message(null, mex);
 					this.chan.send(msg);
+					
+					
 			
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			try {
 				Thread.sleep(electionTimeOut);
-				if (((Integer) map.get("value")) > 0) {
-					A3JGMessage mex = new A3JGMessage();
-					mex.setContent("NewSupervisor");
-					Message msg2 = new Message(null, mex);
-					msg2.setDest(((Address) map.get("newSup")));
-					msg2.setObject(mex);
-					chan.send(msg2);
-				} else {
-					A3JGMessage mex = new A3JGMessage();
-					mex.setContent("Deactivate");
-					Message msg3 = new Message(null, mex);
-					chan.send(msg3);
-
+				if (election) {
+					int max = 0;
+					Address newSup = null;
+					for(Address ad: chan.getView().getMembers()){
+						String s = ad.toString();
+						int value = (int) map.get(s);
+						if(value>max){
+							max = value;
+							newSup = ad;
+						}
+						
+					}
+					if (max > 0) {
+						A3JGMessage mex = new A3JGMessage();
+						mex.setContent("NewSupervisor");
+						Message msg2 = new Message(null, mex);
+						msg2.setDest(newSup);
+						msg2.setObject(mex);
+						chan.send(msg2);
+					} else {
+						A3JGMessage mex = new A3JGMessage();
+						mex.setContent("Deactivate");
+						Message msg3 = new Message(null, mex);
+						chan.send(msg3);
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
