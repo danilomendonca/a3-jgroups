@@ -15,7 +15,6 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	private String groupName;
 	private JChannel chan;
 	protected A3JGNode node;
-	@SuppressWarnings("unused")
 	private ReplicatedHashMap<String, Object> map;
 	
 
@@ -65,6 +64,14 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		this.map = map;
 	}
 
+	public Object getState() {
+		return map.get("state");
+	}
+
+	public void setState(Object state) {
+		map.put("state", state);
+	}
+	
 	public abstract void run();
 	
 	public void receive(Message msg) {
@@ -95,9 +102,30 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		return true;
 	}
 	
+	public boolean sendMessageOverTime(A3JGMessage mex){
+		mex.setType(false);
+		Message msg = new Message();
+		msg.setObject(mex);
+		map.put("message", mex);
+			try {
+				for(Address ad: this.chan.getView().getMembers()){
+					if(!ad.equals(this.chan.getAddress())){
+						msg.setDest(ad);
+						this.chan.send(msg);
+					}else{
+						;
+					}
+				}
+			} catch (Exception e) {
+				return false;
+			}
+		return true;
+	}
+	
 	public abstract void messageFromFollower(A3JGMessage msg);
 	public abstract void updateFromFollower(A3JGMessage msg);
 	public abstract int fitnessFunc();
+
 
 	
 	

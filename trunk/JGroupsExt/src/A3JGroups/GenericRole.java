@@ -46,7 +46,6 @@ public class GenericRole extends ReceiverAdapter{
 	}
 	
 	public void viewAccepted(View v){
-		System.out.println(v);
 		if (v.size()==1){
 			if(node.getSupervisorRole(groupName)!=null){
 				node.getSupervisorRole(groupName).setActive(true);
