@@ -3,6 +3,7 @@ package A3JGroups;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
@@ -80,7 +81,7 @@ public abstract class A3JGNode{
 	    map.start(timeout);
 	    GenericRole generic = new GenericRole(this, groupName, chan, map);
 	    chan.setReceiver(generic);
-		if(map.get("supervisor")==null){
+		if(!chan.getView().getMembers().contains(map.get("supervisor"))){
 			if(this.getSupervisorRole(groupName)!=null){
 				if(map.putIfAbsent("supervisor", chan.getAddress())==null){
 					this.getSupervisorRole(groupName).setActive(true);
@@ -88,9 +89,13 @@ public abstract class A3JGNode{
 					this.getSupervisorRole(groupName).setMap(map);
 					chan.setReceiver(this.getSupervisorRole(groupName));
 					new Thread(this.getSupervisorRole(groupName)).start();
-					map.remove("value");
-					map.remove("newSup");
-					map.remove("change");
+					if(map.get("change")!=null){
+						A3JGMessage msg = new A3JGMessage();
+						msg.setContent("TerminateElection");
+						Message mex = new Message((Address) map.get("change"), msg);
+						chan.send(mex);
+						map.remove("change");
+						}
 					return true;
 				}else{
 					if(this.getFollowerRole(groupName)!=null){

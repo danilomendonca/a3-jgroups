@@ -76,7 +76,6 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	
 	public void receive(Message msg) {
 		A3JGMessage mex = (A3JGMessage) msg.getObject();
-
 		if (mex.getType()) {
 			updateFromFollower(mex);
 		} else
@@ -121,12 +120,34 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 			}
 		return true;
 	}
+
+	public void merge(String groupName) throws Exception{
+		A3JGMessage mex = new A3JGMessage();
+		mex.setContent("MergeGroup"+groupName);
+		sendMessageToFollower(mex);
+		node.joinGroup(groupName);
+		node.terminate(this.groupName);
+	}
 	
+	public void join(String groupName) throws Exception{
+		A3JGMessage mex = new A3JGMessage();
+		mex.setContent("JoinGroup"+groupName);
+		sendMessageToFollower(mex);
+		node.joinGroup(groupName);
+	}
+	
+	public void split(String newGroupName){
+		A3JGMessage mex = new A3JGMessage();
+		mex.setContent("fitnessFunction");
+		sendMessageToFollower(mex);
+	}
+	
+	public A3JGroup infoGroup(){
+		return (A3JGroup) map.get("groupInfo");
+	}
+
 	public abstract void messageFromFollower(A3JGMessage msg);
 	public abstract void updateFromFollower(A3JGMessage msg);
 	public abstract int fitnessFunc();
-
-
-	
 	
 }

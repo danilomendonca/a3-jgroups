@@ -26,4 +26,5 @@ public class A3JGMessage implements Serializable{
 		this.content = content;
 	}
 
+
 }
