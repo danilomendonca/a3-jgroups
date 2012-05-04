@@ -4,7 +4,6 @@ package A3JGroups;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
-import org.jgroups.View;
 import org.jgroups.blocks.ReplicatedHashMap;
 
 public class GenericRole extends ReceiverAdapter{
@@ -23,40 +22,32 @@ public class GenericRole extends ReceiverAdapter{
 		this.map = map;
 	}
 
-	public void receive (Message msg){
-		if(msg.getObject().equals("fitnessFunction")){
+	public void receive(Message mex) {
+		A3JGMessage msg = (A3JGMessage) mex.getObject();
+		
+		if(msg.getContent().equals("fitnessFunction")){
 			int fitness;
 			if(node.getSupervisorRole(groupName)!=null)
 				fitness = node.getSupervisorRole(groupName).fitnessFunc();
 			else
 				fitness = 0;
-			if(fitness > ((Integer) map.get("value"))){
-				map.replace("value", fitness);
-				map.replace("newSup", chan.getAddress());
-			}
-		}else if(msg.getObject().equals("NewSupervisor")){
-			if(map.putIfAbsent("supervisor", chan.getAddress())==null){
-				chan.setReceiver(node.getSupervisorRole(groupName));
-				node.getSupervisorRole(groupName).setActive(true);
-				node.getSupervisorRole(groupName).setChan(chan);
-				node.getSupervisorRole(groupName).setMap(map);
-				new Thread(node.getSupervisorRole(groupName)).start();
-			}
+			
+			map.put(chan.getAddressAsString(), fitness);
+			
+		}else if(msg.getContent().equals("NewSupervisor")){
+			
+			map.put("supervisor", chan.getAddress());
+			map.put("change", null);
+			node.getSupervisorRole(groupName).setActive(true);
+			node.getSupervisorRole(groupName).setChan(chan);
+			node.getSupervisorRole(groupName).setMap(map);
+			chan.setReceiver(node.getSupervisorRole(groupName));
+			new Thread(node.getSupervisorRole(groupName)).start();
+			
+		}else if(msg.getContent().equals("Deactivate")){
+			node.terminate(groupName);
 		}
+		
 	}
 	
-	public void viewAccepted(View v){
-		if (v.size()==1){
-			if(node.getSupervisorRole(groupName)!=null){
-				node.getSupervisorRole(groupName).setActive(true);
-				chan.setReceiver(node.getSupervisorRole(groupName));
-				new Thread(node.getSupervisorRole(groupName)).start();
-			}
-		}else
-			if(node.getFollowerRole(groupName)!=null){
-				node.getFollowerRole(groupName).setActive(true);
-				chan.setReceiver(node.getFollowerRole(groupName));
-				new Thread(node.getFollowerRole(groupName)).start();
-			}
-	}
 }

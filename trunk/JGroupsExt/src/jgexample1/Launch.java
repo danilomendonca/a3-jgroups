@@ -13,14 +13,14 @@ public class Launch {
 			node2.addFollowerRole("red", new RedFollower(1,"red"));
 			node2.joinGroup("red");
 
-			Thread.sleep(10000);
+			Thread.sleep(5000);
 
 			RedNode node3 = new RedNode("red3");
 			node3.addSupervisorRole("red", new RedSupervisor(1,"red"));
 			node3.addFollowerRole("red", new RedFollower(1,"red"));
 			node3.joinGroup("red");
 			
-			Thread.sleep(10000);
+			Thread.sleep(5000);
 			
 			node1.terminate("red");
 			
