@@ -89,6 +89,7 @@ public abstract class A3JGNode{
 					this.getSupervisorRole(groupName).setActive(true);
 					this.getSupervisorRole(groupName).setChan(chan);
 					this.getSupervisorRole(groupName).setMap(map);
+					this.getSupervisorRole(groupName).index=-1;
 					chan.setReceiver(this.getSupervisorRole(groupName));
 					new Thread(this.getSupervisorRole(groupName)).start();
 					return true;
@@ -99,6 +100,7 @@ public abstract class A3JGNode{
 						this.getFollowerRole(groupName).setMap(map);
 						chan.setReceiver(this.getFollowerRole(groupName));
 						new Thread(this.getFollowerRole(groupName)).start();
+						
 						return true;
 					}
 				}

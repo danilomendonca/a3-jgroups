@@ -1,6 +1,12 @@
 package A3JGroups;
 
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
@@ -12,6 +18,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 
 	protected boolean active;
 	private int resourceCost;
+	protected int index;
 	private String groupName;
 	private JChannel chan;
 	protected A3JGNode node;
@@ -101,11 +108,23 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		return true;
 	}
 	
-	public boolean sendMessageOverTime(A3JGMessage mex){
+	public int sendMessageOverTime(A3JGMessage mex, int days, int hours, int minutes){
 		mex.setType(false);
 		Message msg = new Message();
 		msg.setObject(mex);
-		map.put("message", mex);
+		index++;
+		Calendar c = Calendar.getInstance();
+		if(days == 0 && hours == 0 && minutes == 0){
+			c=null;
+		}else{
+			c.add(Calendar.DATE, days);
+			c.add(Calendar.HOUR, hours);
+			c.add(Calendar.MINUTE, minutes);
+		}
+		HashMap<Integer, Date> chiavi = ((HashMap<Integer, Date>) map.get("message"));
+		chiavi.put(index, c.getTime());
+		map.put("message", chiavi);
+		map.put("MessageInMemory_"+index, msg);
 			try {
 				for(Address ad: this.chan.getView().getMembers()){
 					if(!ad.equals(this.chan.getAddress())){
@@ -116,9 +135,9 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 					}
 				}
 			} catch (Exception e) {
-				return false;
+				return -1;
 			}
-		return true;
+		return index;
 	}
 
 	public void merge(String groupName) throws Exception{
