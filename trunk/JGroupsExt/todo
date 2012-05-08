@@ -13,4 +13,18 @@ Generic:
 SupervisorElection:
 		last generic that joins the group doesn't participate in the election
 		(use MessageOverMemory???)
+		
+		
+8/5
 
+limite numero tentativi per eleggere il supervisore		
+
+return sendMessageToSupervisor -----> boolean/Eccezione
+
+inserimento mex in memoria
+	- teniamo sempre traccia dell'index
+	- ripristiniamo l'index quando un nuovo supervisore viene online
+
+cancellazione mex in memoria:
+		-index (salvato come informazione applicativa - non nel nostro controllo)
+		-automatico (ora/giorno di scadenza)

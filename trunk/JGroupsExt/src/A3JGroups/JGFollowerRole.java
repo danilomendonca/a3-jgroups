@@ -1,5 +1,10 @@
 package A3JGroups;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
@@ -91,6 +96,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 				node.getSupervisorRole(groupName).setChan(chan);
 				node.getSupervisorRole(groupName).setMap(map);
 				chan.setReceiver(node.getSupervisorRole(groupName));
+				node.getSupervisorRole(groupName).index = getLastIndex();
 				new Thread(node.getSupervisorRole(groupName)).start();
 				
 		}else if(msg.getContent().equals("Deactivate")){
@@ -122,16 +128,6 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		if (!view.getMembers().contains(map.get("supervisor")) && view.getMembers().get(0).equals(chan.getAddress())) {
 			System.out.println("vista cambiata e supervisore morto **************** "+map.values());
 			map.put("change", chan.getAddress());
-			
-			try {
-				A3JGMessage mex = new A3JGMessage();
-				mex.setContent("fitnessFunction");
-				Message msg = new Message(null, mex);
-				this.chan.send(msg);
-			
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 			
 			if(em!=null){
 				em.setDecide(false);
@@ -179,6 +175,8 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	
 	public boolean sendMessageToSupervisor(A3JGMessage mex){
 		try {
+			if(!chan.getView().containsMember((Address) map.get("supervisor")))
+				return false;
 			Message msg = new Message((Address) map.get("supervisor"), mex);
 			this.chan.send(msg);
 		} catch (Exception e) {
@@ -190,6 +188,8 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	public boolean sendUpdateToSupervisor(A3JGMessage mex){
 		mex.setType(true);
 		try {
+			if(!chan.getView().containsMember((Address) map.get("supervisor")))
+				return false;
 			Message msg = new Message((Address) map.get("supervisor"), mex);
 			this.chan.send(msg);
 		} catch (Exception e) {
@@ -198,9 +198,26 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		return true;
 	}
 	
-	public Object getMessageOverTime(){
-		A3JGMessage msg = (A3JGMessage) map.get("message");
-		return msg.getContent();
+	@SuppressWarnings("unchecked")
+	public List<A3JGMessage> getMessageOverTime(){
+		ArrayList<A3JGMessage> mex = new ArrayList<A3JGMessage>();
+		List<Integer> chiavi = ((List<Integer>) map.get("message"));
+		for(int i: chiavi){
+			Message msg = ((Message) map.get("MessageInMemory_"+i));
+			mex.add((A3JGMessage) msg.getObject());
+		}
+		return mex;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private int getLastIndex(){
+		Map<Integer, Date> chiavi = (Map<Integer, Date>) map.get("message");
+		int max = -1;
+		for(int i: chiavi.keySet()){
+			if(i>max)
+				max=i;
+		}
+		return max;
 	}
 	
 	public abstract void messageFromSupervisor(A3JGMessage msg);
