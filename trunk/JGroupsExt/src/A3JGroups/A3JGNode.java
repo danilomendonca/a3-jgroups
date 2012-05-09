@@ -17,7 +17,7 @@ public abstract class A3JGNode{
 	private Map<String,JGSupervisorRole> supervisorRoles = new HashMap<String, JGSupervisorRole>(); 
 	private Map<String,JGFollowerRole> followerRoles = new HashMap<String, JGFollowerRole>();
 	private Map<String,JChannel> channels = new HashMap<String, JChannel>();
-	
+	protected Map<String,GenericRole> waitings = new HashMap<String, GenericRole>();
 	
 	
 	public A3JGNode(String ID){
@@ -79,11 +79,10 @@ public abstract class A3JGNode{
 	    	}
 	    };
 
-		
 	    map.start(timeout);
 	    GenericRole generic = new GenericRole(this, groupName, chan, map);
 	    chan.setReceiver(generic);
-		if(!chan.getView().getMembers().contains(map.get("supervisor"))){
+		if(map.get("supervisor")==null){
 			if(this.getSupervisorRole(groupName)!=null){
 				if(map.putIfAbsent("supervisor", chan.getAddress())==null){
 					this.getSupervisorRole(groupName).setActive(true);
@@ -100,26 +99,29 @@ public abstract class A3JGNode{
 						this.getFollowerRole(groupName).setMap(map);
 						chan.setReceiver(this.getFollowerRole(groupName));
 						new Thread(this.getFollowerRole(groupName)).start();
-						
 						return true;
 					}
 				}
 			}
-		}else{
+		}else if(chan.getView().getMembers().contains(map.get("supervisor"))){
 			if(this.getFollowerRole(groupName)!=null){
 				this.getFollowerRole(groupName).setActive(true);
 				this.getFollowerRole(groupName).setChan(chan);
 				this.getFollowerRole(groupName).setMap(map);
-				chan.setReceiver(this.getFollowerRole(groupName));
 				new Thread(this.getFollowerRole(groupName)).start();
+				chan.setReceiver(this.getFollowerRole(groupName));
 				return true;
 			}
+		}else{
+			generic.waitElection();
+			waitings.put(groupName, generic);
+			return true;
 		}
 		close(groupName);
 		return false;
 	}
 	
-	private void close(String groupName) {
+	protected void close(String groupName) {
 		JChannel chan = channels.get(groupName);
 		chan.disconnect();
 		chan.close();

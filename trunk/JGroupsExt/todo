@@ -1,23 +1,6 @@
 merge view (più avanti)
 
-Generic:
-		if(supervisor == null && exist(groupname)){
-				if(generic.getSupervisorRole(groupName)!=null){
-						wait until the end of the election
-						if(generic.isElected)
-								do nothing
-						else
-								if(generic.getFollowerRole(groupName)!=null){
-									activate(followerRole(groupName));
-									
-SupervisorElection:
-		last generic that joins the group doesn't participate in the election
-		(use MessageOverMemory???)
-		
-		
-8/5
-
-limite numero tentativi per eleggere il supervisore		
+8/5	
 
 return sendMessageToSupervisor -----> boolean/Eccezione
 
