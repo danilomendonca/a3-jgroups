@@ -23,6 +23,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	private ReplicatedHashMap<String, Object> map;
 	private ElectionManager em;
 	private long electionTime = 10000;
+	private int attempt = 0;
 	
 	public JGFollowerRole(int resourceCost, String groupName) {
 		super();
@@ -118,58 +119,22 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+		}else if(msg.getContent().equals("StayFollower")){
+			attempt = 0;
 		}else{
 			messageFromSupervisor(msg);
 		}
 	}
 	
 	public void viewAccepted(View view) {
-		if (!view.getMembers().contains(map.get("supervisor")) && view.getMembers().get(0).equals(chan.getAddress())) {
-			System.out.println("vista cambiata e supervisore morto **************** "+map.values());
+		if (!view.getMembers().contains(map.get("supervisor")) && view.getMembers().get(0).equals(chan.getAddress()) && attempt < 4) {
 			map.put("change", chan.getAddress());
-			
+			attempt++;
 			if(em!=null){
 				em.setDecide(false);
 			}
 			em = new ElectionManager(electionTime, map, chan);
 			new Thread(em).start();
-			
-			/*try {
-				Thread.sleep(electionTimeOut);
-				prova--;
-				System.out.println("attesa finita *****************" + prova + map.values());
-				if (prova == 0) {
-					int max = 0;
-					Address newSup = null;
-					for (Address ad : chan.getView().getMembers()) {
-						String s = ad.toString();
-						if (map.containsKey(s)) {
-							int value = (int) map.get(s);
-							if (value > max) {
-								max = value;
-								newSup = ad;
-							}
-						}
-					}
-					if (max > 0) {
-						System.out.println("entrato con: "+max+" e sup is: "+newSup+" e prova: "+prova);
-						A3JGMessage mex = new A3JGMessage();
-						mex.setContent("NewSupervisor");
-						Message msg2 = new Message(null, mex);
-						msg2.setDest(newSup);
-						msg2.setObject(mex);
-						chan.send(msg2);
-					} else {
-						A3JGMessage mex = new A3JGMessage();
-						mex.setContent("Deactivate");
-						Message msg3 = new Message(null, mex);
-						chan.send(msg3);
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}*/
 		}
     }
 	
@@ -211,11 +176,13 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	
 	@SuppressWarnings("unchecked")
 	private int getLastIndex(){
-		Map<Integer, Date> chiavi = (Map<Integer, Date>) map.get("message");
 		int max = -1;
-		for(int i: chiavi.keySet()){
-			if(i>max)
-				max=i;
+		if(map.get("message")!=null){
+			Map<Integer, Date> chiavi = (Map<Integer, Date>) map.get("message");
+			for (int i : chiavi.keySet()) {
+				if (i > max)
+					max = i;
+			}
 		}
 		return max;
 	}

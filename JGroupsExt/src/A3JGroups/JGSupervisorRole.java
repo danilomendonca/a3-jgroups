@@ -4,8 +4,6 @@ package A3JGroups;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.jgroups.Address;
 import org.jgroups.JChannel;
@@ -108,6 +106,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public int sendMessageOverTime(A3JGMessage mex, int days, int hours, int minutes){
 		mex.setType(false);
 		Message msg = new Message();
