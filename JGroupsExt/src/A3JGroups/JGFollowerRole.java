@@ -2,6 +2,7 @@ package A3JGroups;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +78,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 
 	public abstract void run();
 	
+	@SuppressWarnings("unchecked")
 	public void receive(Message mex) {
 		A3JGMessage msg = (A3JGMessage) mex.getObject();
 		if(msg.getContent().equals("fitnessFunction")){
@@ -98,6 +100,12 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 				node.getSupervisorRole(groupName).setMap(map);
 				chan.setReceiver(node.getSupervisorRole(groupName));
 				node.getSupervisorRole(groupName).index = getLastIndex();
+				if(map.get("message")!=null){
+					node.getSupervisorRole(groupName).deleter.setActive(true);
+					node.getSupervisorRole(groupName).deleter.setMap(map);
+					node.getSupervisorRole(groupName).deleter.setChiavi((HashMap<Integer, Date>) map.get("message"));
+					new Thread(node.getSupervisorRole(groupName).deleter).start();
+				}
 				new Thread(node.getSupervisorRole(groupName)).start();
 				
 		}else if(msg.getContent().equals("Deactivate")){

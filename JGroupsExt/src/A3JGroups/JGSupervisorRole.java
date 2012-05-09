@@ -21,6 +21,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	private JChannel chan;
 	protected A3JGNode node;
 	private ReplicatedHashMap<String, Object> map;
+	protected MessageDelete deleter =  new MessageDelete();
 	
 
 	public JGSupervisorRole(int resourceCost, String groupName) {
@@ -113,32 +114,58 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		msg.setObject(mex);
 		index++;
 		Calendar c = Calendar.getInstance();
-		if(days == 0 && hours == 0 && minutes == 0){
-			c=null;
-		}else{
+		if (days == 0 && hours == 0 && minutes == 0) {
+			c = null;
+		} else {
 			c.add(Calendar.DATE, days);
 			c.add(Calendar.HOUR, hours);
 			c.add(Calendar.MINUTE, minutes);
 		}
-		HashMap<Integer, Date> chiavi = ((HashMap<Integer, Date>) map.get("message"));
+
+		HashMap<Integer, Date> chiavi;
+		if (map.get("message") == null)
+			chiavi = new HashMap<Integer, Date>();
+		else
+			chiavi = ((HashMap<Integer, Date>) map.get("message"));
 		chiavi.put(index, c.getTime());
 		map.put("message", chiavi);
-		map.put("MessageInMemory_"+index, msg);
-			try {
-				for(Address ad: this.chan.getView().getMembers()){
-					if(!ad.equals(this.chan.getAddress())){
-						msg.setDest(ad);
-						this.chan.send(msg);
-					}else{
-						;
-					}
+		map.put("MessageInMemory_" + index, msg);
+		deleter.setChiavi(chiavi);
+		if (!deleter.isActive()) {
+			deleter.setMap(map);
+			deleter.setActive(true);
+			new Thread(deleter).start();
+		}
+
+		try {
+			for (Address ad : this.chan.getView().getMembers()) {
+				if (!ad.equals(this.chan.getAddress())) {
+					msg.setDest(ad);
+					this.chan.send(msg);
+				} else {
+					;
 				}
-			} catch (Exception e) {
-				return -1;
 			}
+		} catch (Exception e) {
+			return -1;
+		}
 		return index;
 	}
 
+	@SuppressWarnings("unchecked")
+	public void removeMessage(int index){
+		HashMap<Integer, Date> chiavi = ((HashMap<Integer, Date>) map.get("message"));
+		chiavi.remove(index);
+		map.put("message", chiavi);
+		map.remove("MessageInMemory_"+index);
+		if(chiavi.size()>0){
+			deleter.setChiavi(chiavi);
+		}else{
+			deleter.setActive(false);
+			deleter.setMap(null);
+		}
+	}
+	
 	public void merge(String groupName) throws Exception{
 		A3JGMessage mex = new A3JGMessage();
 		mex.setContent("MergeGroup"+groupName);
@@ -147,6 +174,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		node.terminate(this.groupName);
 	}
 	
+	
 	public void join(String groupName) throws Exception{
 		A3JGMessage mex = new A3JGMessage();
 		mex.setContent("JoinGroup"+groupName);
@@ -154,12 +182,14 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		node.joinGroup(groupName);
 	}
 	
+	//doesn't work
 	public void split(String newGroupName){
 		A3JGMessage mex = new A3JGMessage();
 		mex.setContent("fitnessFunction");
 		sendMessageToFollower(mex);
 	}
 	
+	//doesn't work
 	public A3JGroup infoGroup(){
 		return (A3JGroup) map.get("groupInfo");
 	}
