@@ -10,6 +10,7 @@ public class MessageDelete implements Runnable{
 	private boolean active = false;
 	private ReplicatedHashMap<String, Object> map;
 	private HashMap<Integer, Date> chiavi;
+	private int waitTime = 60000;
 	
 	public void setActive(boolean active) {
 		this.active = active;
@@ -21,6 +22,10 @@ public class MessageDelete implements Runnable{
 
 	public void setMap(ReplicatedHashMap<String, Object> map) {
 		this.map = map;
+	}
+	
+	public void setWaitTime(int waitTime) {
+		this.waitTime = waitTime;
 	}
 
 	public void setChiavi(HashMap<Integer, Date> chiavi) {
@@ -42,7 +47,13 @@ public class MessageDelete implements Runnable{
 					}
 				}
 			}
+			try {
+				Thread.sleep(waitTime);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
+		
 	}
 	
 }

@@ -70,12 +70,20 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		this.map = map;
 	}
 
-	public Object getState() {
-		return map.get("state");
+	public Object getSupBackupState() {
+		return map.get("A3SupBackupState");
 	}
 
-	public void setState(Object state) {
-		map.put("state", state);
+	public void putSupBackupState(Object state) {
+		map.put("A3SupBackupState", state);
+	}
+	
+	public Object getAppSharedState(String stateKey){
+		return map.get("A3SharedState"+stateKey);
+	}
+	
+	public void putAppSharedState(String stateKey, Object appState){
+		map.put("A3SharedState"+stateKey, appState);
 	}
 	
 	public abstract void run();
