@@ -76,6 +76,14 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		this.electionTime = electionTime;
 	}
 
+	public Object getAppSharedState(String stateKey){
+		return map.get("A3SharedState"+stateKey);
+	}
+	
+	public void putAppSharedState(String stateKey, Object appState){
+		map.put("A3SharedState"+stateKey, appState);
+	}	
+
 	public abstract void run();
 	
 	@SuppressWarnings("unchecked")
