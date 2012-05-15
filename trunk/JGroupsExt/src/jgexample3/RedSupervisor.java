@@ -36,7 +36,7 @@ public class RedSupervisor extends JGSupervisorRole {
 			
 			A3JGMessage msg = new A3JGMessage();
 			msg.setContent("temperature");
-			sendMessageToFollower(msg);
+			sendMessageToFollower(msg, null);
 			System.out.println("["+this.getNode().getID()+"] Sending message to red followers...  " + (vista.getMembers().size()-1));
 			
 			

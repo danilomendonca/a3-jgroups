@@ -28,7 +28,7 @@ public class GenericRole extends ReceiverAdapter{
 	public void receive(Message mex) {
 		A3JGMessage msg = (A3JGMessage) mex.getObject();
 		
-		if(msg.getContent().equals("fitnessFunction")){
+		if(msg.getContent().equals("A3FitnessFunction")){
 			int fitness;
 			if(node.getSupervisorRole(groupName)!=null)
 				fitness = node.getSupervisorRole(groupName).fitnessFunc();
@@ -37,10 +37,10 @@ public class GenericRole extends ReceiverAdapter{
 			
 			map.put(chan.getAddressAsString(), fitness);
 			
-		}else if(msg.getContent().equals("NewSupervisor")){
+		}else if(msg.getContent().equals("A3NewSupervisor")){
 			
-			map.put("supervisor", chan.getAddress());
-			map.put("change", null);
+			map.put("A3Supervisor", chan.getAddress());
+			map.put("A3Change", null);
 			node.getSupervisorRole(groupName).setActive(true);
 			node.getSupervisorRole(groupName).setChan(chan);
 			node.getSupervisorRole(groupName).setMap(map);
@@ -48,9 +48,9 @@ public class GenericRole extends ReceiverAdapter{
 			node.getSupervisorRole(groupName).index = getLastIndex();
 			new Thread(node.getSupervisorRole(groupName)).start();
 			
-		}else if(msg.getContent().equals("Deactivate")){
+		}else if(msg.getContent().equals("A3Deactivate")){
 			node.terminate(groupName);
-		}else if(msg.getContent().equals("StayFollower")){
+		}else if(msg.getContent().equals("A3StayFollower")){
 			if(node.getFollowerRole(groupName)!=null){
 				System.out.println(map.toString());
 				node.getFollowerRole(groupName).setActive(true);
@@ -66,7 +66,7 @@ public class GenericRole extends ReceiverAdapter{
 	}
 	
 	public void waitElection(){
-		if(map.get("fitnessFunction")!=null){
+		if(map.get("A3FitnessFunction")!=null){
 			int fitness;
 			if(node.getSupervisorRole(groupName)!=null)
 				fitness = node.getSupervisorRole(groupName).fitnessFunc();
@@ -74,7 +74,7 @@ public class GenericRole extends ReceiverAdapter{
 				fitness = 0;
 			map.put(chan.getAddressAsString(), fitness);
 		}
-		if(map.get("Deactivate")!=null){
+		if(map.get("A3Deactivate")!=null){
 			node.waitings.remove(groupName);
 			node.terminate(groupName);
 		}
@@ -83,8 +83,8 @@ public class GenericRole extends ReceiverAdapter{
 	@SuppressWarnings("unchecked")
 	private int getLastIndex(){
 		int max = -1;
-		if(map.get("message")!=null){
-			Map<Integer, Date> chiavi = (Map<Integer, Date>) map.get("message");
+		if(map.get("A3Message")!=null){
+			Map<Integer, Date> chiavi = (Map<Integer, Date>) map.get("A3Message");
 			for (int i : chiavi.keySet()) {
 				if (i > max)
 					max = i;

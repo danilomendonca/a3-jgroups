@@ -26,7 +26,7 @@ public class ElectionManager implements Runnable{
 	public void run() {
 		try {
 			A3JGMessage mex = new A3JGMessage();
-			sendMessage(mex, "fitnessFunction");
+			sendMessage(mex, "A3FitnessFunction");
 			
 			Thread.sleep(electionTime);
 			
@@ -44,14 +44,14 @@ public class ElectionManager implements Runnable{
 					}
 				}
 				if (max > 0) {
-					map.remove("fitnessFunction");
+					map.remove("A3FitnessFunction");
 					A3JGMessage mex2 = new A3JGMessage();
-					mex2.setContent("NewSupervisor");
+					mex2.setContent("A3NewSupervisor");
 					Message msg2 = new Message(null, mex2);
 					msg2.setDest(newSup);
 					chan.send(msg2);
 					A3JGMessage mex3 = new A3JGMessage();
-					mex3.setContent("StayFollower");
+					mex3.setContent("A3StayFollower");
 					Message msg3 = new Message(null, mex3);
 					for(Address ad: chan.getView().getMembers()){
 						if(!ad.equals(newSup)){
@@ -61,7 +61,7 @@ public class ElectionManager implements Runnable{
 					}
 				} else {
 					A3JGMessage mex3 = new A3JGMessage();
-					sendMessage(mex3, "Deactivate");
+					sendMessage(mex3, "A3Deactivate");
 				}
 			}
 		
