@@ -36,7 +36,7 @@ public class BlueSupervisor extends JGSupervisorRole {
 					System.out.println("["+this.getNode().getID()+"] Sending message to blue followers... "+(vista.getMembers().size()-1));
 					A3JGMessage msg = new A3JGMessage();
 					msg.setContent("people");
-					sendMessageToFollower(msg);
+					sendMessageToFollower(msg, null);
 				
 				}
 	}

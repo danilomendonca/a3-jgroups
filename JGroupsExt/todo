@@ -11,3 +11,9 @@ inserimento mex in memoria
 cancellazione mex in memoria:
 		-index (salvato come informazione applicativa - non nel nostro controllo)
 		-automatico (ora/giorno di scadenza)
+		
+14/05
+
+test messaggi in memoria
+
+create test ospedale (un terminale e 4 stanze ---> sottogruppi di colori arrivati al terminale)

@@ -12,7 +12,7 @@ public abstract class A3JGNode{
 	
 	private int resourceThreshold;
 	private String ID;
-	private long timeout = 1000;
+	private long timeout = 10000;
 	
 	private Map<String,JGSupervisorRole> supervisorRoles = new HashMap<String, JGSupervisorRole>(); 
 	private Map<String,JGFollowerRole> followerRoles = new HashMap<String, JGFollowerRole>();
@@ -68,10 +68,11 @@ public abstract class A3JGNode{
 		channels.put(groupName, chan);
 		chan.connect(groupName);
 		
-	    ReplicatedHashMap<String, Object> map = new ReplicatedHashMap<String, Object>(chan){
+		ReplicatedHashMap<String, Object> map = new ReplicatedHashMap<String, Object>(chan){
 	    	
 	    	public void receive(Message m){
-	    		chan.getReceiver().receive(m);
+				if (chan.getReceiver() != null)
+					chan.getReceiver().receive(m);
 	    	}
 	    	
 	    	public void viewAccepted(View v){
@@ -82,9 +83,9 @@ public abstract class A3JGNode{
 	    map.start(timeout);
 	    GenericRole generic = new GenericRole(this, groupName, chan, map);
 	    chan.setReceiver(generic);
-		if(map.get("supervisor")==null){
+		if(map.get("A3Supervisor")==null){
 			if(this.getSupervisorRole(groupName)!=null){
-				if(map.putIfAbsent("supervisor", chan.getAddress())==null){
+				if(map.putIfAbsent("A3Supervisor", chan.getAddress())==null){
 					this.getSupervisorRole(groupName).setActive(true);
 					this.getSupervisorRole(groupName).setChan(chan);
 					this.getSupervisorRole(groupName).setMap(map);
@@ -103,7 +104,7 @@ public abstract class A3JGNode{
 					}
 				}
 			}
-		}else if(chan.getView().getMembers().contains(map.get("supervisor"))){
+		}else if(chan.getView().getMembers().contains(map.get("A3Supervisor"))){
 			if(this.getFollowerRole(groupName)!=null){
 				this.getFollowerRole(groupName).setActive(true);
 				this.getFollowerRole(groupName).setChan(chan);

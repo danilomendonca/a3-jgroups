@@ -1,4 +1,4 @@
-package jgexample1;
+package jgexampleMex;
 
 
 
@@ -8,7 +8,6 @@ import A3JGroups.JGFollowerRole;
 public class RedFollower extends JGFollowerRole{
 
 	private int temp;
-	public boolean prova = false;
 	
 	public RedFollower(int resourceCost, String groupName) {
 		super(resourceCost, groupName);
@@ -18,12 +17,8 @@ public class RedFollower extends JGFollowerRole{
 	public void run() {
 		
 		while (this.active) {
-			
-			temp = (int) (Math.random()*35);
-			System.out.println(this.getNode().getID()+" "+temp);
-			if(prova)
-				showMessage();
 			try {
+				temp = (int) (Math.random()*35);
 				Thread.sleep(1500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -35,14 +30,15 @@ public class RedFollower extends JGFollowerRole{
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
 		if(msg.getContent().equals("temperature")){
+			System.out.println(map);
 			A3JGMessage mex = new A3JGMessage();
 			mex.setContent(temp);
 			sendMessageToSupervisor(mex);
 		}
 	}
 	
-	public void showMessage(){
-		System.out.println(map);
+	public String showMessage(){
+		return map.get("A3Message").toString();
 	}
 
 

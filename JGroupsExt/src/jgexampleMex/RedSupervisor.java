@@ -1,4 +1,4 @@
-package jgexample1;
+package jgexampleMex;
 
 import java.util.ArrayList;
 
@@ -13,6 +13,8 @@ public class RedSupervisor extends JGSupervisorRole {
 	private int fitness = 2;
 	private ArrayList<Integer> temp = new ArrayList<Integer>();
 	private View vista;
+	private int i = 0;
+	private int[] min = {1,2,0,3,2,4,5,2};
 	
 	public RedSupervisor(int resourceCost, String groupName) {
 		super(resourceCost, groupName);
@@ -33,18 +35,19 @@ public class RedSupervisor extends JGSupervisorRole {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			A3JGMessage msg = new A3JGMessage();
-			msg.setContent("temperature");
-			sendMessageToFollower(msg, null);
-			System.out.println("["+this.getNode().getID()+"] Sending message to followers...  " + (vista.getMembers().size()-1));
-			
-			
+			if (i < 8) {
+				A3JGMessage msg = new A3JGMessage();
+				msg.setContent("temperature");
+				sendMessageOverTime(msg, null, 0, 0, min[i]);
+				System.out.println("[" + this.getNode().getID() + "] Sending message to followers...  " + i);
+				i++;
+			}
 		}
 	}
 
 	@Override
 	public void messageFromFollower(A3JGMessage msg) {
+		System.out.println(map);
 		temp.add((Integer) msg.getContent());
 		if(temp.size()==(vista.getMembers().size()-1)){
 			int avarage = 0;
@@ -53,23 +56,19 @@ public class RedSupervisor extends JGSupervisorRole {
 			}
 			avarage = (avarage/(vista.getMembers().size()-1));
 			temp = new ArrayList<Integer>();
-			System.out.println(this.getNode().getID()+" The average temperature is " + avarage);
 			
 		}
 	}
 
 	@Override
 	public void updateFromFollower(A3JGMessage msg) {
-		System.out.println(this.getNode().getID()+"  has recived update from someone");
+		
 	}
 
 	@Override
 	public int fitnessFunc() {
 		return fitness;
 	}
-	
-	public void writeOnMap(){
-		map.put("test di prova", "vediamo se c'è");
-	}
+
 
 }

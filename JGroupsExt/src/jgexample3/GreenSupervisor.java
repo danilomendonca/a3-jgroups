@@ -33,7 +33,7 @@ public class GreenSupervisor extends JGSupervisorRole {
 			
 			A3JGMessage msg = new A3JGMessage();
 			msg.setContent("computer");
-			sendMessageToFollower(msg);
+			sendMessageToFollower(msg, null);
 			System.out.println("["+this.getNode().getID()+"] Sending message to green followers...  " + (vista.getMembers().size()-1));
 		}
 	}
