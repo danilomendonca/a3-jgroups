@@ -11,7 +11,7 @@ public class MessageDelete implements Runnable{
 	private boolean active = false;
 	private ReplicatedHashMap<String, Object> map;
 	private HashMap<Integer, Date> chiavi;
-	private int waitTime = 60000;
+	private int waitTime = 30000;
 	private ArrayList<Integer> deleteKey = new ArrayList<Integer>();
 	
 	public void setActive(boolean active) {
@@ -34,9 +34,16 @@ public class MessageDelete implements Runnable{
 		this.chiavi = chiavi;
 	}
 
+	public void toDelete(int index){
+		chiavi.remove(index);
+		map.remove("A3MessageInMemory_"+index);
+		map.put("A3Message", chiavi);
+	}
+	
 	@Override
 	public void run() {
 		while(active){
+				
 			Date d = new Date(System.currentTimeMillis());
 			for(int i: chiavi.keySet()){
 				if(d.after(chiavi.get(i))){

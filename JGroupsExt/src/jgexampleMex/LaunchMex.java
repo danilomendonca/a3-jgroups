@@ -17,21 +17,21 @@ public class LaunchMex {
 			node2.addFollowerRole("red", new RedFollower(1,"red"));
 			node2.joinGroup("red");
 
-			Thread.sleep(2000);
+			Thread.sleep(4000);
 
 			RedNode node3 = new RedNode("red3");
 			node3.addSupervisorRole("red", new RedSupervisor(1,"red"));
 			node3.addFollowerRole("red", new RedFollower(1,"red"));
-			//node3.joinGroup("red");
+			node3.joinGroup("red");
 			
 			Thread.sleep(5000); 
 			
 			System.out.println("++++++++++ Wait 3 minutes +++++++++++");
-			
 			Thread.sleep(10000);
 			
 			System.out.println("**************************** delete message 2 ****************************");
 			node1.getSupervisorRole("red").removeMessage(2);
+			Thread.sleep(100);
 			System.out.println(((RedFollower) node2.getFollowerRole("red")).showMessage());
 			
 			Thread.sleep(200000);

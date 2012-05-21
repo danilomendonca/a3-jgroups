@@ -33,7 +33,6 @@ public class RedSupervisor extends JGSupervisorRole {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
 			A3JGMessage msg = new A3JGMessage();
 			msg.setContent("temperature");
 			sendMessageToFollower(msg, null);

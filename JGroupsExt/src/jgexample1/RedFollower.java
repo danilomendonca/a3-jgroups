@@ -1,7 +1,6 @@
 package jgexample1;
 
 
-
 import A3JGroups.A3JGMessage;
 import A3JGroups.JGFollowerRole;
 
