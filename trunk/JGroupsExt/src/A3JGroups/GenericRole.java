@@ -15,14 +15,16 @@ public class GenericRole extends ReceiverAdapter{
 	private String groupName;
 	private JChannel chan;
 	private ReplicatedHashMap<String, Object> map;
+	private A3JGRHMNotification notifier;
 	
 	
-	public GenericRole(A3JGNode node, String groupName, JChannel chan, ReplicatedHashMap<String, Object> map) {
+	public GenericRole(A3JGNode node, String groupName, JChannel chan, ReplicatedHashMap<String, Object> map, A3JGRHMNotification notifier) {
 		super();
 		this.node = node;
 		this.groupName = groupName;
 		this.chan = chan;
 		this.map = map;
+		this.notifier = notifier;
 	}
 
 	public void receive(Message mex) {
@@ -44,6 +46,7 @@ public class GenericRole extends ReceiverAdapter{
 			node.getSupervisorRole(groupName).setActive(true);
 			node.getSupervisorRole(groupName).setChan(chan);
 			node.getSupervisorRole(groupName).setMap(map);
+			node.getSupervisorRole(groupName).setNotifier(notifier);
 			chan.setReceiver(node.getSupervisorRole(groupName));
 			node.getSupervisorRole(groupName).index = getLastIndex();
 			new Thread(node.getSupervisorRole(groupName)).start();
@@ -56,6 +59,7 @@ public class GenericRole extends ReceiverAdapter{
 				node.getFollowerRole(groupName).setActive(true);
 				node.getFollowerRole(groupName).setChan(chan);
 				node.getFollowerRole(groupName).setMap(map);
+				node.getFollowerRole(groupName).setNotifier(notifier);
 				chan.setReceiver(node.getFollowerRole(groupName));
 				new Thread(node.getFollowerRole(groupName)).start();
 			}else{

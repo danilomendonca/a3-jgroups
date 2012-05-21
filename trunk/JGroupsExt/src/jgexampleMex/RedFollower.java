@@ -18,6 +18,7 @@ public class RedFollower extends JGFollowerRole{
 		
 		while (this.active) {
 			try {
+				showMessage();
 				temp = (int) (Math.random()*35);
 				Thread.sleep(1500);
 			} catch (InterruptedException e) {
@@ -38,7 +39,7 @@ public class RedFollower extends JGFollowerRole{
 	}
 	
 	public String showMessage(){
-		return map.get("A3Message").toString();
+		return map.toString();
 	}
 
 

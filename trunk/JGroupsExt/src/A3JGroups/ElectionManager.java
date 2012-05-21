@@ -36,7 +36,7 @@ public class ElectionManager implements Runnable{
 				for (Address ad : chan.getView().getMembers()) {
 					String s = ad.toString();
 					if (map.containsKey(s)) {
-						int value = (int) map.get(s);
+						int value = (Integer) map.get(s);
 						if (value > max) {
 							max = value;
 							newSup = ad;
@@ -44,7 +44,12 @@ public class ElectionManager implements Runnable{
 					}
 				}
 				if (max > 0) {
+					map.remove("A3Change");
 					map.remove("A3FitnessFunction");
+					for(Address ad: chan.getView().getMembers()){
+						map.remove(ad.toString());
+						
+					}
 					A3JGMessage mex2 = new A3JGMessage();
 					mex2.setContent("A3NewSupervisor");
 					Message msg2 = new Message(null, mex2);

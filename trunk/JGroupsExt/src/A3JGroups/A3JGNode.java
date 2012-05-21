@@ -42,6 +42,10 @@ public abstract class A3JGNode{
 		role.setNode(this);
 	}
 	
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
+	}
+
 	public JGSupervisorRole getSupervisorRole(String groupName) {
 		return supervisorRoles.get(groupName);
 	}
@@ -62,11 +66,11 @@ public abstract class A3JGNode{
 	
 	public boolean joinGroup(String groupName) throws Exception {
 		
-		if ( channels.get(groupName)!=null)
+		if (channels.get(groupName)!=null)
 			return false;
 		final JChannel chan = new JChannel();
 		channels.put(groupName, chan);
-		chan.connect(groupName);
+		
 		
 		ReplicatedHashMap<String, Object> map = new ReplicatedHashMap<String, Object>(chan){
 	    	
@@ -76,19 +80,28 @@ public abstract class A3JGNode{
 	    	}
 	    	
 	    	public void viewAccepted(View v){
-	    		chan.getReceiver().viewAccepted(v);
+	    		if (chan.getReceiver() != null)
+	    			chan.getReceiver().viewAccepted(v);
+	    		
+	    		this.viewAcceptedOriginal(v);
+	    		
 	    	}
 	    };
 
+	    A3JGRHMNotification notifier = new A3JGRHMNotification();
+	    notifier.setNodeID(ID);
+	    map.addNotifier(notifier);
+	    chan.connect(groupName);
+	    
 	    map.start(timeout);
-	    GenericRole generic = new GenericRole(this, groupName, chan, map);
-	    chan.setReceiver(generic);
-		if(map.get("A3Supervisor")==null){
+	    
+	    if(map.get("A3Supervisor")==null){
 			if(this.getSupervisorRole(groupName)!=null){
 				if(map.putIfAbsent("A3Supervisor", chan.getAddress())==null){
 					this.getSupervisorRole(groupName).setActive(true);
 					this.getSupervisorRole(groupName).setChan(chan);
 					this.getSupervisorRole(groupName).setMap(map);
+					this.getSupervisorRole(groupName).setNotifier(notifier);
 					this.getSupervisorRole(groupName).index=-1;
 					chan.setReceiver(this.getSupervisorRole(groupName));
 					new Thread(this.getSupervisorRole(groupName)).start();
@@ -98,6 +111,7 @@ public abstract class A3JGNode{
 						this.getFollowerRole(groupName).setActive(true);
 						this.getFollowerRole(groupName).setChan(chan);
 						this.getFollowerRole(groupName).setMap(map);
+						this.getFollowerRole(groupName).setNotifier(notifier);
 						chan.setReceiver(this.getFollowerRole(groupName));
 						new Thread(this.getFollowerRole(groupName)).start();
 						return true;
@@ -109,11 +123,14 @@ public abstract class A3JGNode{
 				this.getFollowerRole(groupName).setActive(true);
 				this.getFollowerRole(groupName).setChan(chan);
 				this.getFollowerRole(groupName).setMap(map);
+				this.getFollowerRole(groupName).setNotifier(notifier);
 				new Thread(this.getFollowerRole(groupName)).start();
 				chan.setReceiver(this.getFollowerRole(groupName));
 				return true;
 			}
 		}else{
+			GenericRole generic = new GenericRole(this, groupName, chan, map, notifier);
+			chan.setReceiver(generic);
 			generic.waitElection();
 			waitings.put(groupName, generic);
 			return true;

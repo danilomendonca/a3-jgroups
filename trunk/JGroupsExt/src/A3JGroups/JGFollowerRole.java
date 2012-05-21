@@ -25,6 +25,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	private ElectionManager em;
 	private long electionTime = 10000;
 	private int attempt = 0;
+	private A3JGRHMNotification notifier;
 	
 	public JGFollowerRole(int resourceCost, String groupName) {
 		super();
@@ -99,22 +100,21 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 			map.put(chan.getAddressAsString(), fitness);
 			
 		}else if(msg.getContent().equals("A3NewSupervisor")){
+			map.put("A3Supervisor", chan.getAddress());
 			
-				map.put("A3Supervisor", chan.getAddress());
-				map.put("A3Change", null);
-				this.active=false;
-				node.getSupervisorRole(groupName).setActive(true);
-				node.getSupervisorRole(groupName).setChan(chan);
-				node.getSupervisorRole(groupName).setMap(map);
-				chan.setReceiver(node.getSupervisorRole(groupName));
-				node.getSupervisorRole(groupName).index = getLastIndex();
-				if(map.get("message")!=null){
-					node.getSupervisorRole(groupName).deleter.setActive(true);
-					node.getSupervisorRole(groupName).deleter.setMap(map);
-					node.getSupervisorRole(groupName).deleter.setChiavi((HashMap<Integer, Date>) map.get("A3Message"));
-					new Thread(node.getSupervisorRole(groupName).deleter).start();
-				}
-				new Thread(node.getSupervisorRole(groupName)).start();
+			this.active=false;
+			node.getSupervisorRole(groupName).setActive(true);
+			node.getSupervisorRole(groupName).setChan(chan);
+			node.getSupervisorRole(groupName).setMap(map);
+			chan.setReceiver(node.getSupervisorRole(groupName));
+			node.getSupervisorRole(groupName).index = getLastIndex();
+			if(map.get("A3Message")!=null){
+				node.getSupervisorRole(groupName).deleter.setActive(true);
+				node.getSupervisorRole(groupName).deleter.setMap(map);
+				node.getSupervisorRole(groupName).deleter.setChiavi((HashMap<Integer, Date>) map.get("A3Message"));
+				new Thread(node.getSupervisorRole(groupName).deleter).start();
+			}
+			new Thread(node.getSupervisorRole(groupName)).start();
 				
 		}else if(msg.getContent().equals("A3Deactivate")){
 			node.terminate(groupName);
@@ -144,7 +144,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	
 	public void viewAccepted(View view) {
 		if (!view.getMembers().contains(map.get("A3Supervisor")) && view.getMembers().get(0).equals(chan.getAddress()) && attempt < 4) {
-			map.put("change", chan.getAddress());
+			map.put("A3Change", chan.getAddress());
 			attempt++;
 			if(em!=null){
 				em.setDecide(false);
@@ -184,8 +184,8 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		ArrayList<A3JGMessage> mex = new ArrayList<A3JGMessage>();
 		List<Integer> chiavi = ((List<Integer>) map.get("A3Message"));
 		for(int i: chiavi){
-			Message msg = ((Message) map.get("A3MessageInMemory_"+i));
-			mex.add((A3JGMessage) msg.getObject());
+			A3JGMessage msg = ((A3JGMessage) map.get("A3MessageInMemory_"+i));
+			mex.add(msg);
 		}
 		return mex;
 	}
@@ -204,6 +204,14 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	}
 	
 	public abstract void messageFromSupervisor(A3JGMessage msg);
+
+	public A3JGRHMNotification getNotifier() {
+		return notifier;
+	}
+
+	public void setNotifier(A3JGRHMNotification notifier) {
+		this.notifier = notifier;
+	}
 
 		
 }
