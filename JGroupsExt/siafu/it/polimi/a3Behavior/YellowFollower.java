@@ -11,7 +11,6 @@ public class YellowFollower extends JGFollowerRole{
 	
 	private Agent agent;
 	private World world;
-	private boolean pos;
 	private Place screen;
 	
 	public YellowFollower(int resourceCost, String groupName) {
@@ -36,7 +35,9 @@ public class YellowFollower extends JGFollowerRole{
 
 	@Override
 	public void run() {
-		pos=true;
+		A3JGMessage mex = new A3JGMessage();
+		mex.setContent(this.getChan().getAddress());
+		sendMessageToSupervisor(mex);
 		while (this.active) {
 			try {
 				if(!world.findAllAgentsNear(screen.getPos(), 80, true).contains(agent))
@@ -49,14 +50,7 @@ public class YellowFollower extends JGFollowerRole{
 
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
-		if(msg.getContent().equals("NeedDestination?") && pos){
-			A3JGMessage mex = new A3JGMessage();
-			mex.setContent(this.getChan().getAddress());
-			sendMessageToSupervisor(mex);
-		}else if (pos){
-			agent.setDestination((Place) msg.getContent());
-			pos=false;
-		}
+		agent.setDestination((Place) msg.getContent());
 	}
 
 }

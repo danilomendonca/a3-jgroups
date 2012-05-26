@@ -144,6 +144,10 @@ public class AgentModel extends BaseAgentModel {
 		greenIndicator.setAgent(a2);
 		blueIndicator.setAgent(a3);
 		yellowIndicator.setAgent(a4);
+		redIndicator.setPos(worldM.getRed());
+		greenIndicator.setPos(worldM.getGreen());
+		blueIndicator.setPos(worldM.getBlue());
+		yellowIndicator.setPos(worldM.getYellow());
 		node.addSupervisorRole("red", redIndicator);
 		node.addSupervisorRole("green", greenIndicator);
 		node.addSupervisorRole("blue", blueIndicator);
