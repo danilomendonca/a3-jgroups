@@ -119,22 +119,22 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		}else if(msg.getContent().equals("A3Deactivate")){
 			node.terminate(groupName);
 		
-		}else if(((String) msg.getContent()).contains("A3MergeGroup")){
-			String group = ((String) msg.getContent()).substring(9);
-			try {
-				node.joinGroup(group);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			node.terminate(groupName);
-			
-		}else if(((String) msg.getContent()).contains("A3JoinGroup")){
-			String group = ((String) msg.getContent()).substring(9);
-			try {
-				node.joinGroup(group);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//		}else if(((String) msg.getContent()).contains("A3MergeGroup")){
+//			String group = ((String) msg.getContent()).substring(9);
+//			try {
+//				node.joinGroup(group);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			node.terminate(groupName);
+//			
+//		}else if(((String) msg.getContent()).contains("A3JoinGroup")){
+//			String group = ((String) msg.getContent()).substring(9);
+//			try {
+//				node.joinGroup(group);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 		}else if(msg.getContent().equals("A3StayFollower")){
 			attempt = 0;
 		}else{

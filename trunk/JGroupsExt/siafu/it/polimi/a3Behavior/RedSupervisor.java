@@ -34,11 +34,7 @@ public class RedSupervisor extends JGSupervisorRole {
 
 	@Override
 	public void run() {
-		while (this.active) {
-			A3JGMessage mex = new A3JGMessage();
-			mex.setContent("NeedDestination?");
-			sendMessageToFollower(mex, null);
-		}
+		
 	}
 
 	@Override

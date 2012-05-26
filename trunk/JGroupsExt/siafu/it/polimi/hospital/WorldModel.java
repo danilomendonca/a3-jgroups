@@ -94,6 +94,19 @@ public class WorldModel extends BaseWorldModel {
 	public Place getBlue(int num) {
 		return blue.get(num);
 	}
+	
+	public ArrayList<Place> getGreen() {
+		return green;
+	}
+	public ArrayList<Place> getRed() {
+		return red;
+	}
+	public ArrayList<Place> getBlue() {
+		return blue;
+	}
+	public ArrayList<Place> getYellow() {
+		return yellow;
+	}
 	public void setScreen(Place screen) {
 		this.screen = screen;
 	}
@@ -229,6 +242,10 @@ public class WorldModel extends BaseWorldModel {
 	 */
 	public void doIteration(final Collection<Place> places) {
 		ArrayList<Trackable> agents = null;
+		boolean red = false;
+		boolean green = false;
+		boolean blue = false;
+		boolean yellow = false;
 
 		try {
 			agents = world.findAllAgentsNear(screen.getPos(), 80, false);
@@ -236,26 +253,50 @@ public class WorldModel extends BaseWorldModel {
 			for (int i = 0; i < agents.size(); i++) {
 				Agent ag = (Agent) agents.get(i);
 				if (((Text) ag.get(TYPE)).getText().equalsIgnoreCase("Magenta")){
+					red = true;
 					if(!((MixedNode) ag.get(NODE)).getFollowerRole("red").isActive()){
 						((RedFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("red")).setScreen(screen);
 						((MixedNode) ag.get(NODE)).joinGroup("red");
 					}
 				}else if (((Text) ag.get(TYPE)).getText().equalsIgnoreCase("Blue")){
+					blue = true;
 					if(!((MixedNode) ag.get(NODE)).getFollowerRole("blue").isActive()){
 						((BlueFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("blue")).setScreen(screen);
 						((MixedNode) ag.get(NODE)).joinGroup("blue");
 					}
 				}else if (((Text) ag.get(TYPE)).getText().equalsIgnoreCase("Green")){
+					green = true;
 					if(!((MixedNode) ag.get(NODE)).getFollowerRole("green").isActive()){
 						((GreenFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("green")).setScreen(screen);
 						((MixedNode) ag.get(NODE)).joinGroup("green");
 					}
 				}else if (((Text) ag.get(TYPE)).getText().equalsIgnoreCase("Yellow")){
+					yellow = true;
 					if(!((MixedNode) ag.get(NODE)).getFollowerRole("yellow").isActive()){
 						((YellowFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("yellow")).setScreen(screen);
 						((MixedNode) ag.get(NODE)).joinGroup("yellow");
 					}
 				}
+			}
+			if(red){
+				redIndicator.setDir(0);
+			}else{
+				redIndicator.setDir(1);
+			}
+			if(green){
+				greenIndicator.setDir(6);
+			}else{
+				greenIndicator.setDir(1);
+			}
+			if(blue){
+				blueIndicator.setDir(2);
+			}else{
+				blueIndicator.setDir(1);
+			}
+			if(yellow){
+				yellowIndicator.setDir(4);
+			}else{
+				yellowIndicator.setDir(1);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
