@@ -7,17 +7,16 @@ import de.nec.nle.siafu.model.World;
 import A3JGroups.A3JGMessage;
 import A3JGroups.JGFollowerRole;
 
-
-public class BlueFollower extends JGFollowerRole {
+public class SubRedFollower extends JGFollowerRole{
 	
 	private Agent agent;
 	private World world;
 	private Place screen;
 	
-	public BlueFollower(int resourceCost, String groupName) {
+	public SubRedFollower(int resourceCost, String groupName) {
 		super(resourceCost, groupName);
 	}
-	
+
 	public Agent getAgent() {
 		return agent;
 	}
@@ -41,10 +40,8 @@ public class BlueFollower extends JGFollowerRole {
 		sendMessageToSupervisor(mex);
 		while (this.active) {
 			try {
-				if(!world.findAllAgentsNear(screen.getPos(), 70, true).contains(agent)){
-					this.node.terminate("sub" + this.getChan().getClusterName());
+				if(!world.findAllAgentsNear(screen.getPos(), 70, true).contains(agent))
 					this.node.terminate(this.getChan().getClusterName());
-				}
 			} catch (NothingNearException e) {
 				e.printStackTrace();
 			}
@@ -55,6 +52,5 @@ public class BlueFollower extends JGFollowerRole {
 	public void messageFromSupervisor(A3JGMessage msg) {
 		agent.setDestination((Place) msg.getContent());
 	}
-
 
 }

@@ -36,6 +36,14 @@ import it.polimi.A3Behavior2.RedFollower;
 import it.polimi.A3Behavior2.RedSupervisor;
 import it.polimi.A3Behavior2.ScreenFollower;
 import it.polimi.A3Behavior2.ScreenSupervisor;
+import it.polimi.A3Behavior2.SubBlueFollower;
+import it.polimi.A3Behavior2.SubBlueSupervisor;
+import it.polimi.A3Behavior2.SubGreenFollower;
+import it.polimi.A3Behavior2.SubGreenSupervisor;
+import it.polimi.A3Behavior2.SubRedFollower;
+import it.polimi.A3Behavior2.SubRedSupervisor;
+import it.polimi.A3Behavior2.SubYellowFollower;
+import it.polimi.A3Behavior2.SubYellowSupervisor;
 import it.polimi.A3Behavior2.YellowFollower;
 import it.polimi.A3Behavior2.YellowSupervisor;
 
@@ -158,9 +166,6 @@ public class AgentModel extends BaseAgentModel {
 			
 			MixedNode node = new MixedNode("Screen"+i);
 			
-			//aggiungere screenRole
-			
-			
 			RedSupervisor redIndicator = new RedSupervisor(0, "red"+i);
 			GreenSupervisor greenIndicator = new GreenSupervisor(0, "green"+i);
 			BlueSupervisor blueIndicator = new BlueSupervisor(0, "blue"+i);
@@ -236,6 +241,17 @@ public class AgentModel extends BaseAgentModel {
 				GreenFollower green = new GreenFollower(0, "green"+ind);
 				BlueFollower blue = new BlueFollower(0, "blue"+ind);
 				YellowFollower yellow = new YellowFollower(0, "yellow"+ind);
+				
+				SubRedFollower sred = new SubRedFollower(0, "red"+ind);
+				SubGreenFollower sgreen = new SubGreenFollower(0, "green"+ind);
+				SubBlueFollower sblue = new SubBlueFollower(0, "blue"+ind);
+				SubYellowFollower syellow = new SubYellowFollower(0, "yellow"+ind);
+				
+				SubRedSupervisor sured = new SubRedSupervisor(0, "red"+ind);
+				SubGreenSupervisor sugreen = new SubGreenSupervisor(0, "green"+ind);
+				SubBlueSupervisor sublue = new SubBlueSupervisor(0, "blue"+ind);
+				SubYellowSupervisor suyellow = new SubYellowSupervisor(0, "yellow"+ind);
+				
 				red.setAgent(a5);
 				red.setWorld(world);
 				green.setAgent(a5);
@@ -244,10 +260,35 @@ public class AgentModel extends BaseAgentModel {
 				blue.setWorld(world);
 				yellow.setAgent(a5);
 				yellow.setWorld(world);
+				
+				sred.setAgent(a5);
+				sred.setWorld(world);
+				sgreen.setAgent(a5);
+				sgreen.setWorld(world);
+				sblue.setAgent(a5);
+				sblue.setWorld(world);
+				syellow.setAgent(a5);
+				syellow.setWorld(world);
+				
+				sured.setAgent(a5);
+				sugreen.setAgent(a5);
+				sublue.setAgent(a5);
+				suyellow.setAgent(a5);
+				
 				mixed.addFollowerRole("red"+ind, red);
 				mixed.addFollowerRole("green"+ind, green);
 				mixed.addFollowerRole("blue"+ind, blue);
 				mixed.addFollowerRole("yellow"+ind, yellow);
+				
+				mixed.addFollowerRole("subred"+ind, sred);
+				mixed.addFollowerRole("subgreen"+ind, sgreen);
+				mixed.addFollowerRole("subblue"+ind, sblue);
+				mixed.addFollowerRole("subyellow"+ind, syellow);
+				
+				mixed.addSupervisorRole("subred"+ind, sured);
+				mixed.addSupervisorRole("subgreen"+ind, sugreen);
+				mixed.addSupervisorRole("subblue"+ind, sublue);
+				mixed.addSupervisorRole("subyellow"+ind, suyellow);
 			}
 			
 			a5.set(NODE, mixed);
