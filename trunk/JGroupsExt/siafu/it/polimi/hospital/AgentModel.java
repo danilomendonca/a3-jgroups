@@ -192,7 +192,7 @@ public class AgentModel extends BaseAgentModel {
 			MixedNode mixed = new MixedNode("p_"+i);
 			RedFollower red = new RedFollower(0, "red");
 			GreenFollower green = new GreenFollower(0, "green");
-			BlueFollower blue = new BlueFollower(0, "bue");
+			BlueFollower blue = new BlueFollower(0, "blue");
 			YellowFollower yellow = new YellowFollower(0, "yellow");
 			red.setAgent(a5);
 			red.setWorld(world);
