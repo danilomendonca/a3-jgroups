@@ -27,6 +27,10 @@ import it.polimi.A3Behavior2.GreenFollower;
 import it.polimi.A3Behavior2.MixedNode;
 import it.polimi.A3Behavior2.RedFollower;
 import it.polimi.A3Behavior2.YellowFollower;
+import it.polimi.A3Behavior2.SubBlueFollower;
+import it.polimi.A3Behavior2.SubGreenFollower;
+import it.polimi.A3Behavior2.SubRedFollower;
+import it.polimi.A3Behavior2.SubYellowFollower;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -267,27 +271,31 @@ public class WorldModel extends BaseWorldModel {
 					Agent ag = (Agent) agents.get(i);
 					if (((Text) ag.get(TYPE)).getText().equalsIgnoreCase("Magenta")) {
 						red = true;
-						if (!((MixedNode) ag.get(NODE)).getFollowerRole("red" + index).isActive()) {
+						if (!((MixedNode) ag.get(NODE)).getFollowerRole("subred" + index).isActive()) {
+							((SubRedFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("subred" + index)).setScreen(screens.get(index));
 							((RedFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("red" + index)).setScreen(screens.get(index));
-							((MixedNode) ag.get(NODE)).joinGroup("red" + index);
+							((MixedNode) ag.get(NODE)).joinGroup("subred" + index);
 						}
 					} else if (((Text) ag.get(TYPE)).getText().equalsIgnoreCase("Blue")) {
 						blue = true;
-						if (!((MixedNode) ag.get(NODE)).getFollowerRole("blue" + index).isActive()) {
+						if (!((MixedNode) ag.get(NODE)).getFollowerRole("subblue" + index).isActive()) {
+							((SubBlueFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("subblue" + index)).setScreen(screens.get(index));
 							((BlueFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("blue" + index)).setScreen(screens.get(index));
-							((MixedNode) ag.get(NODE)).joinGroup("blue" + index);
+							((MixedNode) ag.get(NODE)).joinGroup("subblue" + index);
 						}
 					} else if (((Text) ag.get(TYPE)).getText().equalsIgnoreCase("Green")) {
 						green = true;
-						if (!((MixedNode) ag.get(NODE)).getFollowerRole("green" + index).isActive()) {
+						if (!((MixedNode) ag.get(NODE)).getFollowerRole("subgreen" + index).isActive()) {
+							((SubGreenFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("subgreen" + index)).setScreen(screens.get(index));
 							((GreenFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("green" + index)).setScreen(screens.get(index));
-							((MixedNode) ag.get(NODE)).joinGroup("green" + index);
+							((MixedNode) ag.get(NODE)).joinGroup("subgreen" + index);
 						}
 					} else if (((Text) ag.get(TYPE)).getText().equalsIgnoreCase("Yellow")) {
 						yellow = true;
-						if (!((MixedNode) ag.get(NODE)).getFollowerRole("yellow" + index).isActive()) {
+						if (!((MixedNode) ag.get(NODE)).getFollowerRole("subyellow" + index).isActive()) {
+							((SubYellowFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("subyellow" + index)).setScreen(screens.get(index));
 							((YellowFollower) ((MixedNode) ag.get(NODE)).getFollowerRole("yellow" + index)).setScreen(screens.get(index));
-							((MixedNode) ag.get(NODE)).joinGroup("yellow" + index);
+							((MixedNode) ag.get(NODE)).joinGroup("subyellow" + index);
 						}
 					}
 

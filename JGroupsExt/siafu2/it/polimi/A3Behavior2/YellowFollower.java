@@ -40,8 +40,10 @@ public class YellowFollower extends JGFollowerRole{
 		sendMessageToSupervisor(mex);
 		while (this.active) {
 			try {
-				if(!world.findAllAgentsNear(screen.getPos(), 70, true).contains(agent))
+				if(!world.findAllAgentsNear(screen.getPos(), 70, true).contains(agent)){
+					this.node.terminate("sub" + this.getChan().getClusterName());
 					this.node.terminate(this.getChan().getClusterName());
+				}
 			} catch (NothingNearException e) {
 				e.printStackTrace();
 			}
