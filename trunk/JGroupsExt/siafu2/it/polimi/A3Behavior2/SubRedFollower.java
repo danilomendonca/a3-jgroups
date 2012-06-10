@@ -41,7 +41,7 @@ public class SubRedFollower extends JGFollowerRole{
 		while (this.active) {
 			try {
 				if(!world.findAllAgentsNear(screen.getPos(), 70, true).contains(agent))
-					this.node.terminate(this.getChan().getClusterName());
+					this.getNode().terminate(this.getChan().getClusterName());
 			} catch (NothingNearException e) {
 				e.printStackTrace();
 			}

@@ -43,7 +43,7 @@ public class GreenFollower extends JGFollowerRole {
 		while (this.active) {
 			try {
 				if(!world.findAllAgentsNear(screen.getPos(), 80, true).contains(agent))
-					this.node.terminate("green");
+					this.getNode().terminate("green");
 			} catch (NothingNearException e) {
 				e.printStackTrace();
 			}

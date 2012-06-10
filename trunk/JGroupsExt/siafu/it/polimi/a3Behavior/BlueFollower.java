@@ -42,7 +42,7 @@ public class BlueFollower extends JGFollowerRole {
 		while (this.active) {
 			try {
 				if(!world.findAllAgentsNear(screen.getPos(), 80, true).contains(agent))
-					this.node.terminate("blue");
+					this.getNode().terminate("blue");
 			} catch (NothingNearException e) {
 				e.printStackTrace();
 			}
