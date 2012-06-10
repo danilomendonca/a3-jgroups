@@ -17,6 +17,7 @@ public class MixedNode extends A3JGNode implements Publishable {
 	private int blueDir;
 	private int yellowDir;
 	private int greenDir;
+	private boolean obstacle = false;
 	
 	public MixedNode(String ID) {
 		super(ID);
@@ -26,6 +27,14 @@ public class MixedNode extends A3JGNode implements Publishable {
 	public FlatData flatten() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public boolean isObstacle() {
+		return obstacle;
+	}
+
+	public void setObstacle(boolean obstacle) {
+		this.obstacle = obstacle;
 	}
 
 	public ArrayList<Place> getRed() {

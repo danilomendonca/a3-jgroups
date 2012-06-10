@@ -36,12 +36,12 @@ public class Constants {
 	public static final int DEFAULT_SPEED = 6;
 
 	/** Amount of people. */
-	public static final int POPULATION = 100;
+	public static final int POPULATION = 50;
 
 	/**
 	 * The names of the fields in each agent object.
 	 */
-	static class Fields {
+	public static class Fields {
 		/** The agent's current activity. */
 		public static final String ACTIVITY = "Activity";
 

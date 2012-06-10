@@ -69,11 +69,14 @@ public class WorldModel extends BaseWorldModel {
 	private ArrayList<Agent> yellowIndicators = new ArrayList<Agent>();
 	
 	private Agent blockAgent;
+	private MixedNode screen;
 	
-	private RoutingManager manager = null;
-	
-	public RoutingManager getManager() {
-		return this.manager;
+	public MixedNode getScreen() {
+		return screen;
+	}
+
+	public void setScreen(MixedNode screen) {
+		this.screen = screen;
 	}
 	
 	public void setBlockAgent(Agent a) {
@@ -244,8 +247,6 @@ public class WorldModel extends BaseWorldModel {
 		while (itYellowArrows.hasNext()) {
 			addYellowArrow(itYellowArrows.next());
 		}
-		
-		manager = new RoutingManager(this);
 		
 	
 	}

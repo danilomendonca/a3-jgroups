@@ -20,10 +20,10 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	private int resourceCost;
 	private String groupName;
 	private JChannel chan;
-	protected A3JGNode node;
+	private A3JGNode node;
 	protected ReplicatedHashMap<String, Object> map;
 	private ElectionManager em;
-	private long electionTime = 10000;
+	private long electionTime = 1000;
 	private int attempt = 0;
 	private A3JGRHMNotification notifier;
 	

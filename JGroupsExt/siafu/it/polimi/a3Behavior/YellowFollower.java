@@ -41,7 +41,7 @@ public class YellowFollower extends JGFollowerRole{
 		while (this.active) {
 			try {
 				if(!world.findAllAgentsNear(screen.getPos(), 80, true).contains(agent))
-					this.node.terminate("yellow");
+					this.getNode().terminate("yellow");
 			} catch (NothingNearException e) {
 				e.printStackTrace();
 			}

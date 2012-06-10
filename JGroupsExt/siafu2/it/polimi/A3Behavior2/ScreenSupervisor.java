@@ -54,14 +54,21 @@ public class ScreenSupervisor extends JGSupervisorRole {
 
 	@Override
 	public void updateFromFollower(A3JGMessage msg) {
-		// TODO Auto-generated method stub
 		
+		if(msg.getContent().equals("Obstacle on")){
+			rm.setConfiguration(1);
+		}else if(msg.getContent().equals("Obstacle off")){
+			rm.setConfiguration(0);
+		}
+		A3JGMessage mex = new A3JGMessage();
+		Content c = new Content(null, 0, "black");
+		mex.setContent(c);
+		sendMessageToFollower(mex, null);
 	}
 
 	@Override
 	public int fitnessFunc() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 }
