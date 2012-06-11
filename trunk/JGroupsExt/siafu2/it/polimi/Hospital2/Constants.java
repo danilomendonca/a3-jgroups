@@ -73,7 +73,9 @@ public class Constants {
 		/** The agent is out of hospital. */
 		OUT("Out"),
 		/** The agent is waiting for new destination. */
-		WAITING("Waiting");
+		WAITING("Waiting"),
+		/** The agent is waiting for new supervisor. */
+		ELECTION("Election");
 
 		/** Human readable description of the activity. */
 		private String description;

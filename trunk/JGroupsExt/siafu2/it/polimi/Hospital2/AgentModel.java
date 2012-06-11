@@ -341,6 +341,8 @@ public class AgentModel extends BaseAgentModel {
 							a.set(ACTIVITY, Activity.OUT);
 							a.setVisible(false);
 							a.setSpeed(0);
+						}else if(!sensiblePos(a.getPos())){
+							a.set(ACTIVITY, Activity.ELECTION);
 						}else{
 							a.set(ACTIVITY, Activity.WAITING);
 							a.set(TIME, now.shift(0, 20));
@@ -401,6 +403,11 @@ public class AgentModel extends BaseAgentModel {
 				break;
 				
 			case INACTIVE:
+				break;
+				
+			case ELECTION:
+				if(!a.isAtDestination())
+					a.set(ACTIVITY, Activity.WALKING);
 				break;
 				
 			case OUT:
@@ -487,10 +494,8 @@ public class AgentModel extends BaseAgentModel {
 		}
 	}
 
-	
-
 	/**
-	 * Send the agent to the toilet.
+	 * Send the agent to the screen
 	 * 
 	 * @param a the agent that just has to go
 	 */
@@ -498,6 +503,22 @@ public class AgentModel extends BaseAgentModel {
 		a.setDestination(screen);
 		a.set(ACTIVITY, Activity.WALKING);
 		a.setVisible(true);
+	}
+	
+	private boolean sensiblePos(Position pos){
+		for(Place p: worldM.getLab()){
+			if(pos.equals(p.getPos()))
+				return true;
+		}
+		for(Place p: worldM.getRadiology()){
+			if(pos.equals(p.getPos()))
+				return true;
+		}
+		for(Place p: worldM.getPhysiotherapy()){
+			if(pos.equals(p.getPos()))
+				return true;
+		}
+		return false;
 	}
 
 }
