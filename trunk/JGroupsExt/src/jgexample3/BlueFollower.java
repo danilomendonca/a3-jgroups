@@ -6,8 +6,8 @@ import A3JGroups.JGFollowerRole;
 
 public class BlueFollower extends JGFollowerRole {
 
-	public BlueFollower(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public BlueFollower(int resourceCost) {
+		super(resourceCost);
 	}
 
 	private int people;
@@ -30,8 +30,8 @@ public class BlueFollower extends JGFollowerRole {
 
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
-		if(msg.getContent().equals("people")){
-			A3JGMessage mex = new A3JGMessage();
+		if(msg.getValueID().equals("people")){
+			A3JGMessage mex = new A3JGMessage("people");
 			mex.setContent(people);
 			sendMessageToSupervisor(mex);
 		}

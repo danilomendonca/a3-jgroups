@@ -15,8 +15,8 @@ public class RedFollower extends JGFollowerRole{
 	private World world;
 	private Place screen;
 	
-	public RedFollower(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public RedFollower(int resourceCost) {
+		super(resourceCost);
 	}
 	
 	public Agent getAgent() {

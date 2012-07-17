@@ -13,8 +13,8 @@ public class YellowFollower extends JGFollowerRole{
 	private World world;
 	private Place screen;
 	
-	public YellowFollower(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public YellowFollower(int resourceCost) {
+		super(resourceCost);
 	}
 	
 	public Agent getAgent() {

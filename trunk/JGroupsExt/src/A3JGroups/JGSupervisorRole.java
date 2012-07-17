@@ -19,7 +19,6 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	protected boolean active;
 	private int resourceCost;
 	protected int index;
-	private String groupName;
 	private JChannel chan;
 	protected A3JGNode node;
 	protected ReplicatedHashMap<String, Object> map;
@@ -27,10 +26,9 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	private A3JGRHMNotification notifier;
 	
 
-	public JGSupervisorRole(int resourceCost, String groupName) {
+	public JGSupervisorRole(int resourceCost) {
 		super();
 		this.resourceCost = resourceCost;
-		this.groupName = groupName;
 	}
 	
 	public void setNotifier(A3JGRHMNotification notifier) {
@@ -55,10 +53,6 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 
 	public void setNode(A3JGNode node) {
 		this.node = node;
-	}
-
-	public String getGroupName() {
-		return groupName;
 	}
 	
 	public void setActive(boolean active) {
@@ -107,7 +101,9 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	
 	public void receive(Message msg) {
 		A3JGMessage mex = (A3JGMessage) msg.getObject();
-		if (mex.getType()) {
+		if(mex.getValueID().equals("A3SupervisorChallenge")){
+			supChallenge(((Integer)mex.getContent()), msg.getSrc());
+		}else if (mex.getType()) {
 			updateFromFollower(mex);
 		} else
 			messageFromFollower(mex);
@@ -193,31 +189,86 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	}
 	
 	public void merge(String groupName) throws Exception{
-		A3JGMessage mex = new A3JGMessage();
-		mex.setContent("A3MergeGroup"+groupName);
+		A3JGMessage mex = new A3JGMessage("A3MergeGroup"+groupName);
 		sendMessageToFollower(mex, null);
 		node.joinGroup(groupName);
-		node.terminate(this.groupName);
+		node.terminate(this.chan.getClusterName());
 	}
 	
 	
 	public void join(String groupName) throws Exception{
-		A3JGMessage mex = new A3JGMessage();
-		mex.setContent("A3JoinGroup"+groupName);
+		A3JGMessage mex = new A3JGMessage("A3JoinGroup"+groupName);
 		sendMessageToFollower(mex, null);
 		node.joinGroup(groupName);
 	}
 	
 	//doesn't work
 	public void split(String newGroupName){
-		A3JGMessage mex = new A3JGMessage();
-		mex.setContent("A3FitnessFunction");
+		A3JGMessage mex = new A3JGMessage("A3FitnessFunction");
 		sendMessageToFollower(mex, null);
 	}
 	
-	//doesn't work
-	public A3JGroup infoGroup(){
-		return (A3JGroup) map.get("A3GroupInfo");
+	private void supChallenge(int fit, Address ad){
+		Message msg = new Message(ad);
+		A3JGMessage mex;
+		if( fit > fitnessFunc() ){
+			mex = new A3JGMessage("A3NewSupervisor");
+			msg.setObject(mex);
+			try {
+				chan.send(msg);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			String groupName = chan.getClusterName();
+			String folName = node.getGroupInfo(groupName).getFollower().get(0);
+			
+			if(node.getFollowerRole(folName)!=null){
+				this.setActive(false);
+				node.getFollowerRole(folName).setActive(true);
+				node.getFollowerRole(folName).setChan(chan);
+				node.getFollowerRole(folName).setMap(map);
+				node.getFollowerRole(folName).setNotifier(notifier);
+				new Thread(node.getFollowerRole(folName)).start();
+				chan.setReceiver(node.getFollowerRole(folName));
+				node.putActiveRole(groupName, folName);
+			}else
+				node.terminate(groupName);
+		}else{
+			mex = new A3JGMessage("A3StayFollower");
+			msg.setObject(mex);
+			try {
+				chan.send(msg);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean changeRoleInGroup(int config){
+		
+		String role = node.getGroupInfo(chan.getClusterName()).getSupervisor().get(config);
+		if (node.getSupervisorRole(role) != null) {
+			node.putActiveRole(chan.getClusterName(), role);
+			this.active = false;
+
+			node.getSupervisorRole(role).setActive(true);
+			node.getSupervisorRole(role).setChan(chan);
+			node.getSupervisorRole(role).setMap(map);
+			node.getSupervisorRole(role).setNotifier(notifier);
+			chan.setReceiver(node.getSupervisorRole(role));
+			node.getSupervisorRole(role).index = index;
+			if (map.get("A3Message") != null) {
+				node.getSupervisorRole(role).deleter.setActive(true);
+				node.getSupervisorRole(role).deleter.setMap(map);
+				node.getSupervisorRole(role).deleter.setChiavi((HashMap<Integer, Date>) map.get("A3Message"));
+				new Thread(node.getSupervisorRole(role).deleter).start();
+			}
+			new Thread(node.getSupervisorRole(role)).start();
+			return true;
+		}
+		return false;
 	}
 
 	public abstract void messageFromFollower(A3JGMessage msg);

@@ -7,8 +7,8 @@ import A3JGroups.JGFollowerRole;
 
 public class GreenFollower extends JGFollowerRole {
 	
-	public GreenFollower(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public GreenFollower(int resourceCost) {
+		super(resourceCost);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -32,8 +32,8 @@ public class GreenFollower extends JGFollowerRole {
 
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
-		if(msg.getContent().equals("computer")){
-			A3JGMessage mex = new A3JGMessage();
+		if(msg.getValueID().equals("computer")){
+			A3JGMessage mex = new A3JGMessage("computer");
 			mex.setContent(pc);
 			sendMessageToSupervisor(mex);
 		}

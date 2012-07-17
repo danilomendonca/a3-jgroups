@@ -9,8 +9,8 @@ public class RedFollower extends JGFollowerRole{
 
 	private int temp;
 	
-	public RedFollower(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public RedFollower(int resourceCost) {
+		super(resourceCost);
 	}
 
 	@Override
@@ -30,9 +30,9 @@ public class RedFollower extends JGFollowerRole{
 
 	@Override
 	public void messageFromSupervisor(A3JGMessage msg) {
-		if(msg.getContent().equals("temperature")){
+		if(msg.getValueID().equals("temperature")){
 			System.out.println(map);
-			A3JGMessage mex = new A3JGMessage();
+			A3JGMessage mex = new A3JGMessage("temperature");
 			mex.setContent(temp);
 			sendMessageToSupervisor(mex);
 		}

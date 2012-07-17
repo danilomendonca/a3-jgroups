@@ -13,8 +13,8 @@ public class BlueSupervisor extends JGSupervisorRole {
 	private int n = 0;
 	private View vista;
 	
-	public BlueSupervisor(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public BlueSupervisor(int resourceCost) {
+		super(resourceCost);
 	}
 
 	public void setFitness(int fitness) {
@@ -34,8 +34,7 @@ public class BlueSupervisor extends JGSupervisorRole {
 					}
 					
 					System.out.println("["+this.getNode().getID()+"] Sending message to blue followers... "+(vista.getMembers().size()-1));
-					A3JGMessage msg = new A3JGMessage();
-					msg.setContent("people");
+					A3JGMessage msg = new A3JGMessage("people");
 					sendMessageToFollower(msg, null);
 				
 				}

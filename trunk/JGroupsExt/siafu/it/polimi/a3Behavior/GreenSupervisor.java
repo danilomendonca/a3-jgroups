@@ -16,8 +16,8 @@ public class GreenSupervisor extends JGSupervisorRole {
 	private Agent agent;
 	private ArrayList<Place> pos;
 	
-	public GreenSupervisor(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public GreenSupervisor(int resourceCost) {
+		super(resourceCost);
 	}
 	
 	public Agent getAgent() {

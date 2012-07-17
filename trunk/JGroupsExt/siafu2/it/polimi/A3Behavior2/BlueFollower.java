@@ -14,8 +14,8 @@ public class BlueFollower extends JGFollowerRole {
 	private World world;
 	private Place screen;
 	
-	public BlueFollower(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public BlueFollower(int resourceCost) {
+		super(resourceCost);
 	}
 	
 	public Agent getAgent() {

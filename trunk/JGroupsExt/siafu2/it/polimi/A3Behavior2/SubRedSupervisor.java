@@ -13,8 +13,8 @@ public class SubRedSupervisor extends JGSupervisorRole{
 	
 	private Agent agent;
 	
-	public SubRedSupervisor(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public SubRedSupervisor(int resourceCost) {
+		super(resourceCost);
 	}
 	
 	public Agent getAgent() {

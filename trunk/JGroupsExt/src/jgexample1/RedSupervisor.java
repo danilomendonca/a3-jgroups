@@ -10,13 +10,15 @@ import A3JGroups.JGSupervisorRole;
 public class RedSupervisor extends JGSupervisorRole {
 
 	
+	public RedSupervisor(int resourceCost) {
+		super(resourceCost);
+	}
+
 	private int fitness = 2;
 	private ArrayList<Integer> temp = new ArrayList<Integer>();
 	private View vista;
 	
-	public RedSupervisor(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
-	}
+	
 
 	public void setFitness(int fitness) {
 		this.fitness = fitness;
@@ -33,8 +35,7 @@ public class RedSupervisor extends JGSupervisorRole {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			A3JGMessage msg = new A3JGMessage();
-			msg.setContent("temperature");
+			A3JGMessage msg = new A3JGMessage("temperature");
 			sendMessageToFollower(msg, null);
 			System.out.println("["+this.getNode().getID()+"] Sending message to followers...  " + (vista.getMembers().size()-1));
 			
