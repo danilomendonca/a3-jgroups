@@ -13,8 +13,8 @@ public class SubYellowSupervisor  extends JGSupervisorRole{
 	
 	private Agent agent;
 	
-	public SubYellowSupervisor(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public SubYellowSupervisor(int resourceCost) {
+		super(resourceCost);
 	}
 	
 	public Agent getAgent() {

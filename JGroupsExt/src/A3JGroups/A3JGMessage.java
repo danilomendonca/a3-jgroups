@@ -13,7 +13,19 @@ public class A3JGMessage implements Serializable{
 	private boolean type;
 	private Object content;
 	public List<Address> dest = null;
-
+	public String valueID;
+	
+	public A3JGMessage(String valueID, Object content) {
+		super();
+		this.valueID = valueID;
+		this.content = content;
+	}
+	
+	public A3JGMessage(String valueID) {
+		super();
+		this.valueID = valueID;
+	}
+	
 	public boolean getType() {
 		return type;
 	}
@@ -28,6 +40,14 @@ public class A3JGMessage implements Serializable{
 
 	public void setContent(Object content) {
 		this.content = content;
+	}
+
+	public String getValueID() {
+		return valueID;
+	}
+
+	public void setValueID(String valueID) {
+		this.valueID = valueID;
 	}
 
 	public void setDest(List<Address> dest) {

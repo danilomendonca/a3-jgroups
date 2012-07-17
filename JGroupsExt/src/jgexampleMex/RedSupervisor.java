@@ -16,8 +16,8 @@ public class RedSupervisor extends JGSupervisorRole {
 	private int i = 0;
 	private int[] min = {1,2,0,3,2,4,5,2};
 	
-	public RedSupervisor(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public RedSupervisor(int resourceCost) {
+		super(resourceCost);
 	}
 
 	public void setFitness(int fitness) {
@@ -36,8 +36,7 @@ public class RedSupervisor extends JGSupervisorRole {
 				e.printStackTrace();
 			}
 			if (i < 8) {
-				A3JGMessage msg = new A3JGMessage();
-				msg.setContent("temperature");
+				A3JGMessage msg = new A3JGMessage("temperature");
 				sendMessageOverTime(msg, null, 0, 0, min[i]);
 				System.out.println("[" + this.getNode().getID() + "] Sending message to followers...  " + i);
 				i++;

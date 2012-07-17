@@ -1,75 +1,54 @@
 package A3JGroups;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jgroups.Address;
+import java.util.HashMap;
+import java.util.Map;
 
 
 
 public class A3JGroup {
 	
-	private String groupName;
-	private A3JGNode supervisor;
-	private List<A3JGNode> followers = new ArrayList<A3JGNode>();
-	private Address supAddr;
-	private List<Address> folAddr = new ArrayList<Address>();
+	private Map<Integer, String> supervisor = new HashMap<Integer, String>();
+	private Map<Integer, String> follower = new HashMap<Integer, String>();
+	private String groupConnection;
+	private String groupDescriptor;
 	
-	
-	
-	public A3JGroup(String groupName, A3JGNode supervisor) {
+	public A3JGroup(String supervisorDef, String followerDef) {
 		super();
-		this.groupName = groupName;
-		this.supervisor = supervisor;
+		supervisor.put(0, supervisorDef);
+		follower.put(0, followerDef);
 	}
 
-	public String getGroupName() {
-		return groupName;
-	}
-	
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
-	
-	public A3JGNode getSupervisor() {
+	public Map<Integer, String> getSupervisor() {
 		return supervisor;
 	}
 	
-	public void setSupervisor(A3JGNode supervisor) {
-		this.supervisor = supervisor;
+	public Map<Integer, String> getFollower() {
+		return follower;
 	}
 	
-	public List<A3JGNode> getFollowers() {
-		return followers;
+	public void addSupervisor(int index, String className){
+		supervisor.put(index, className);
 	}
 	
-	public void addFollower(A3JGNode node) {
-		followers.add(node);
-	}
-	
-	public void removeFollower(A3JGNode node) {
-		followers.remove(node);
-	}
-	
-	public Address getSupAddr() {
-		return supAddr;
+	public void addFollower(int index, String className){
+		follower.put(index, className);
 	}
 
-	public void setSupAddr(Address supAddr) {
-		this.supAddr = supAddr;
-	}
-
-	public List<Address> getFolAddr() {
-		return folAddr;
-	}
-
-	public void addFolAddr(Address address) {
-		folAddr.add(address);
+	public void addGroupConnection(String pathConfig){
+		groupConnection = pathConfig;
 	}
 	
-	public void removeFolAddr(Address address) {
-		folAddr.remove(address);
+	public String getGroupConnection(){
+		return groupConnection;
+	}
+	
+	public String getGroupDescriptor() {
+		return groupDescriptor;
 	}
 
+	public void setGroupDescriptor(String groupDescriptor) {
+		this.groupDescriptor = groupDescriptor;
+	}
+	
 	
 }

@@ -13,8 +13,8 @@ public class GreenSupervisor extends JGSupervisorRole {
 	private int fitness = 2;
 	private View vista;
 	
-	public GreenSupervisor(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public GreenSupervisor(int resourceCost) {
+		super(resourceCost);
 	}
 
 	public void setFitness(int fitness) {
@@ -31,8 +31,7 @@ public class GreenSupervisor extends JGSupervisorRole {
 				e.printStackTrace();
 			}
 			
-			A3JGMessage msg = new A3JGMessage();
-			msg.setContent("computer");
+			A3JGMessage msg = new A3JGMessage("computer");
 			sendMessageToFollower(msg, null);
 			System.out.println("["+this.getNode().getID()+"] Sending message to green followers...  " + (vista.getMembers().size()-1));
 		}

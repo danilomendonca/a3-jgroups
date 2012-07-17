@@ -15,8 +15,8 @@ public class BlueSupervisor extends JGSupervisorRole {
 	
 	private Agent agent;
 	
-	public BlueSupervisor(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public BlueSupervisor(int resourceCost) {
+		super(resourceCost);
 	}
 	
 	public Agent getAgent() {

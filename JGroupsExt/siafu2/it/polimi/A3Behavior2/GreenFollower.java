@@ -15,8 +15,8 @@ public class GreenFollower extends JGFollowerRole {
 	private World world;
 	private Place screen;
 	
-	public GreenFollower(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public GreenFollower(int resourceCost) {
+		super(resourceCost);
 	}
 	
 	public Agent getAgent() {

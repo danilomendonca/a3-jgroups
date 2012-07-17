@@ -9,8 +9,8 @@ public class ScreenFollower extends JGFollowerRole {
 	private boolean obs = false;
 	private boolean flag = false;
 	
-	public ScreenFollower(int resourceCost, String groupName, int index) {
-		super(resourceCost, groupName);
+	public ScreenFollower(int resourceCost, int index) {
+		super(resourceCost);
 		this.index = index;
 	}
 

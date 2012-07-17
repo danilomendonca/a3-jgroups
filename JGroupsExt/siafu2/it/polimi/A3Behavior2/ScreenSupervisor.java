@@ -17,8 +17,8 @@ public class ScreenSupervisor extends JGSupervisorRole {
 	WorldModel wm;
 	RoutingManager rm;
 	
-	public ScreenSupervisor(int resourceCost, String groupName, WorldModel wm) {
-		super(resourceCost, groupName);
+	public ScreenSupervisor(int resourceCost, WorldModel wm) {
+		super(resourceCost);
 		this.wm = wm;
 		rm = new RoutingManager(wm);
 	}

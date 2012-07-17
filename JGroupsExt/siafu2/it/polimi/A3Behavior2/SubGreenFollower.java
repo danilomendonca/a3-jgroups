@@ -13,8 +13,8 @@ public class SubGreenFollower extends JGFollowerRole{
 	private World world;
 	private Place screen;
 	
-	public SubGreenFollower(int resourceCost, String groupName) {
-		super(resourceCost, groupName);
+	public SubGreenFollower(int resourceCost) {
+		super(resourceCost);
 	}
 
 	public Agent getAgent() {
