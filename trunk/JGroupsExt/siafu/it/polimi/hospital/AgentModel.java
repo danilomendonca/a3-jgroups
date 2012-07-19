@@ -42,6 +42,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 
+import A3JGroups.A3JGroup;
+
 
 import de.nec.nle.siafu.behaviormodels.BaseAgentModel;
 import de.nec.nle.siafu.exceptions.InfoUndefinedException;
@@ -134,12 +136,22 @@ public class AgentModel extends BaseAgentModel {
 		worldM.setYellowIndicator(a4);
 		System.out.println("Created yellow indicator ");
 		
+		//Group information
+		A3JGroup groupInfo = new A3JGroup(RedSupervisor.class.getCanonicalName(), RedFollower.class.getCanonicalName());
+		A3JGroup groupInfo2 = new A3JGroup(BlueSupervisor.class.getCanonicalName(), BlueFollower.class.getCanonicalName());
+		A3JGroup groupInfo3 = new A3JGroup(GreenSupervisor.class.getCanonicalName(), GreenFollower.class.getCanonicalName());
+		A3JGroup groupInfo4 = new A3JGroup(YellowSupervisor.class.getCanonicalName(), YellowFollower.class.getCanonicalName());
+		
 		//Create ScreenNode with 4 SupervisorRole
 		MixedNode node = new MixedNode("Screen");
-		RedSupervisor redIndicator = new RedSupervisor(0, "red");
-		GreenSupervisor greenIndicator = new GreenSupervisor(0, "green");
-		BlueSupervisor blueIndicator = new BlueSupervisor(0, "blue");
-		YellowSupervisor yellowIndicator = new YellowSupervisor(0, "yellow");
+		node.addGroupInfo("red", groupInfo);
+		node.addGroupInfo("blue", groupInfo2);
+		node.addGroupInfo("green", groupInfo3);
+		node.addGroupInfo("yellow", groupInfo4);
+		RedSupervisor redIndicator = new RedSupervisor(0);
+		GreenSupervisor greenIndicator = new GreenSupervisor(0);
+		BlueSupervisor blueIndicator = new BlueSupervisor(0);
+		YellowSupervisor yellowIndicator = new YellowSupervisor(0);
 		redIndicator.setAgent(a);
 		greenIndicator.setAgent(a2);
 		blueIndicator.setAgent(a3);
@@ -148,10 +160,10 @@ public class AgentModel extends BaseAgentModel {
 		greenIndicator.setPos(worldM.getGreen());
 		blueIndicator.setPos(worldM.getBlue());
 		yellowIndicator.setPos(worldM.getYellow());
-		node.addSupervisorRole("red", redIndicator);
-		node.addSupervisorRole("green", greenIndicator);
-		node.addSupervisorRole("blue", blueIndicator);
-		node.addSupervisorRole("yellow", yellowIndicator);
+		node.addSupervisorRole(redIndicator);
+		node.addSupervisorRole(greenIndicator);
+		node.addSupervisorRole(blueIndicator);
+		node.addSupervisorRole(yellowIndicator);
 		a.set(NODE, node);
 		a2.set(NODE, node);
 		a3.set(NODE, node);
@@ -190,10 +202,14 @@ public class AgentModel extends BaseAgentModel {
 			
 			//create personNode
 			MixedNode mixed = new MixedNode("p_"+i);
-			RedFollower red = new RedFollower(0, "red");
-			GreenFollower green = new GreenFollower(0, "green");
-			BlueFollower blue = new BlueFollower(0, "blue");
-			YellowFollower yellow = new YellowFollower(0, "yellow");
+			mixed.addGroupInfo("red", groupInfo);
+			mixed.addGroupInfo("blue", groupInfo2);
+			mixed.addGroupInfo("green", groupInfo3);
+			mixed.addGroupInfo("yellow", groupInfo4);
+			RedFollower red = new RedFollower(0);
+			GreenFollower green = new GreenFollower(0);
+			BlueFollower blue = new BlueFollower(0);
+			YellowFollower yellow = new YellowFollower(0);
 			red.setAgent(a5);
 			red.setWorld(world);
 			green.setAgent(a5);
@@ -202,10 +218,10 @@ public class AgentModel extends BaseAgentModel {
 			blue.setWorld(world);
 			yellow.setAgent(a5);
 			yellow.setWorld(world);
-			mixed.addFollowerRole("red", red);
-			mixed.addFollowerRole("green", green);
-			mixed.addFollowerRole("blue", blue);
-			mixed.addFollowerRole("yellow", yellow);
+			mixed.addFollowerRole(red);
+			mixed.addFollowerRole(green);
+			mixed.addFollowerRole(blue);
+			mixed.addFollowerRole(yellow);
 			a5.set(NODE, mixed);
 			
 			people.add(a5);

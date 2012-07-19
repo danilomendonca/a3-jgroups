@@ -41,7 +41,7 @@ public class YellowSupervisor extends JGSupervisorRole {
 		ArrayList<Address> ad = new ArrayList<Address>();
 		ad.add((Address) msg.getContent());
 		int posNum = (int) (Math.random()*4);
-		A3JGMessage mex = new A3JGMessage();
+		A3JGMessage mex = new A3JGMessage("info");
 		mex.setContent(pos.get(posNum));
 		sendMessageToFollower(mex, ad);
 	}

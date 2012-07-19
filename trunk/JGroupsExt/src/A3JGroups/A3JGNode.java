@@ -3,6 +3,7 @@ package A3JGroups;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
@@ -64,12 +65,12 @@ public abstract class A3JGNode{
 		this.timeout = timeout;
 	}
 
-	public JGSupervisorRole getSupervisorRole(String groupName) {
-		return supervisorRoles.get(groupName);
+	public JGSupervisorRole getSupervisorRole(String className) {
+		return supervisorRoles.get(className);
 	}
 	
-	public JGFollowerRole getFollowerRole(String groupName) {
-		return followerRoles.get(groupName);
+	public JGFollowerRole getFollowerRole(String className) {
+		return followerRoles.get(className);
 	}
 	
 	public void addFollowerRole(JGFollowerRole role) {
@@ -239,6 +240,16 @@ public abstract class A3JGNode{
 						chan.setReceiver(this.getSupervisorRole(supName));
 						new Thread(this.getSupervisorRole(supName)).start();
 						putActiveRole(groupName, supName);
+						
+						A3JGMessage mex = new A3JGMessage("A3SupervisorChange");
+						Message msg = new Message();
+						msg.setObject(mex);
+						msg.setDest((Address) map.get("A3Supervisor"));
+						try {
+							chan.send(msg);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 						return true;
 					}
 				}

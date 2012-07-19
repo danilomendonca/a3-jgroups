@@ -20,7 +20,7 @@ public class ScreenFollower extends JGFollowerRole {
 		Content c2 = new Content(this.getChan().getAddress(), index, "green");
 		Content c3 = new Content(this.getChan().getAddress(), index, "yellow");
 		Content c4 = new Content(this.getChan().getAddress(), index, "blue");
-		A3JGMessage mex = new A3JGMessage();
+		A3JGMessage mex = new A3JGMessage("info");
 		mex.setContent(c1);
 		sendMessageToSupervisor(mex);
 		mex.setContent(c2);
@@ -34,15 +34,13 @@ public class ScreenFollower extends JGFollowerRole {
 		while(this.active){
 			
 			if (((MixedNode) this.getNode()).isObstacle() && !obs) {
-				A3JGMessage mes = new A3JGMessage();
-				mes.setContent("Obstacle on");
+				A3JGMessage mes = new A3JGMessage("Obstacle on");
 				sendUpdateToSupervisor(mes);
 				obs = true;
 				flag = true;
 			}
 			if (!((MixedNode) this.getNode()).isObstacle() && obs && flag) {
-				A3JGMessage mes = new A3JGMessage();
-				mes.setContent("Obstacle off");
+				A3JGMessage mes = new A3JGMessage("Obstacle off");
 				sendUpdateToSupervisor(mes);
 				obs = false;
 			}
@@ -57,7 +55,7 @@ public class ScreenFollower extends JGFollowerRole {
 			Content c2 = new Content(this.getChan().getAddress(), index, "green");
 			Content c3 = new Content(this.getChan().getAddress(), index, "yellow");
 			Content c4 = new Content(this.getChan().getAddress(), index, "blue");
-			A3JGMessage mex = new A3JGMessage();
+			A3JGMessage mex = new A3JGMessage("info");
 			mex.setContent(c1);
 			sendMessageToSupervisor(mex);
 			mex.setContent(c2);

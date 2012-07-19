@@ -69,10 +69,10 @@ public class GenericRole extends ReceiverAdapter{
 			node.waitings.remove(this.chan.getClusterName());
 			
 		}else if(msg.getValueID().equals("A3StayFollower")){
+			
 			String groupName = this.chan.getClusterName();
-			String role = node.getGroupInfo(groupName).getSupervisor().get(0);
-			String folName = node.getGroupInfo(groupName).getFollower().get(0);
-			node.putActiveRole(groupName, folName);
+			String role = node.getGroupInfo(groupName).getFollower().get(0);
+			node.putActiveRole(groupName, role);
 			if(node.getFollowerRole(role)!=null){
 				node.getFollowerRole(role).setActive(true);
 				node.getFollowerRole(role).setChan(chan);
