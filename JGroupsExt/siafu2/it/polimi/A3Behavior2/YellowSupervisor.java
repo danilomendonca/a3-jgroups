@@ -35,7 +35,7 @@ public class YellowSupervisor extends JGSupervisorRole {
 	public void messageFromFollower(A3JGMessage msg) {
 		ArrayList<Address> ad = new ArrayList<Address>();
 		ad.add((Address) msg.getContent());
-		A3JGMessage mex = new A3JGMessage();
+		A3JGMessage mex = new A3JGMessage("info");
 		ArrayList<Place> p = ((MixedNode) this.getNode()).getYellow();
 		mex.setContent(p.get((int) (Math.random()*(p.size()-1))));
 		sendMessageToFollower(mex, ad);

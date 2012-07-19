@@ -37,7 +37,7 @@ public class GreenFollower extends JGFollowerRole {
 
 	@Override
 	public void run() {
-		A3JGMessage mex = new A3JGMessage();
+		A3JGMessage mex = new A3JGMessage("info");
 		mex.setContent(this.getChan().getAddress());
 		sendMessageToSupervisor(mex);
 		while (this.active) {

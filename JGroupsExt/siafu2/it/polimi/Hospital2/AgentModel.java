@@ -52,6 +52,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 
+import A3JGroups.A3JGroup;
+
 
 import de.nec.nle.siafu.behaviormodels.BaseAgentModel;
 import de.nec.nle.siafu.exceptions.InfoUndefinedException;
@@ -108,10 +110,22 @@ public class AgentModel extends BaseAgentModel {
 		people.add(ab);
 		worldM.setBlockAgent(ab);
 		
+		//Group information
+		A3JGroup groupInfo = new A3JGroup(RedSupervisor.class.getCanonicalName(), RedFollower.class.getCanonicalName());
+		A3JGroup groupInfo2 = new A3JGroup(BlueSupervisor.class.getCanonicalName(), BlueFollower.class.getCanonicalName());
+		A3JGroup groupInfo3 = new A3JGroup(GreenSupervisor.class.getCanonicalName(), GreenFollower.class.getCanonicalName());
+		A3JGroup groupInfo4 = new A3JGroup(YellowSupervisor.class.getCanonicalName(), YellowFollower.class.getCanonicalName());
+		A3JGroup groupInfo5 = new A3JGroup(SubRedSupervisor.class.getCanonicalName(), SubRedFollower.class.getCanonicalName());
+		A3JGroup groupInfo6 = new A3JGroup(SubBlueSupervisor.class.getCanonicalName(), SubBlueFollower.class.getCanonicalName());
+		A3JGroup groupInfo7 = new A3JGroup(SubGreenSupervisor.class.getCanonicalName(), SubGreenFollower.class.getCanonicalName());
+		A3JGroup groupInfo8 = new A3JGroup(SubYellowSupervisor.class.getCanonicalName(), SubYellowFollower.class.getCanonicalName());
+		A3JGroup groupInfo9 = new A3JGroup(ScreenSupervisor.class.getCanonicalName(), ScreenFollower.class.getCanonicalName());
+				
 		//create screens Supervisor
 		MixedNode m = new MixedNode("ScreenLeader");
-		ScreenSupervisor  sc = new ScreenSupervisor(1, "screen", worldM);
-		m.addSupervisorRole("screen", sc);
+		m.addGroupInfo("screen", groupInfo9);
+		ScreenSupervisor  sc = new ScreenSupervisor(1, worldM);
+		m.addSupervisorRole(sc);
 		try {
 			m.joinGroup("screen");
 		} catch (Exception e1) {
@@ -165,21 +179,25 @@ public class AgentModel extends BaseAgentModel {
 			System.out.println("Created yellow indicator " + i);
 			
 			MixedNode node = new MixedNode("Screen"+i);
-			
-			RedSupervisor redIndicator = new RedSupervisor(0, "red"+i);
-			GreenSupervisor greenIndicator = new GreenSupervisor(0, "green"+i);
-			BlueSupervisor blueIndicator = new BlueSupervisor(0, "blue"+i);
-			YellowSupervisor yellowIndicator = new YellowSupervisor(0, "yellow"+i);
-			ScreenFollower scf = new ScreenFollower(1, "screen", i);
+			node.addGroupInfo("red"+i, groupInfo);
+			node.addGroupInfo("blue"+i, groupInfo2);
+			node.addGroupInfo("green"+i, groupInfo3);
+			node.addGroupInfo("yellow"+i, groupInfo4);
+			node.addGroupInfo("screen", groupInfo9);
+			RedSupervisor redIndicator = new RedSupervisor(0);
+			GreenSupervisor greenIndicator = new GreenSupervisor(0);
+			BlueSupervisor blueIndicator = new BlueSupervisor(0);
+			YellowSupervisor yellowIndicator = new YellowSupervisor(0);
+			ScreenFollower scf = new ScreenFollower(1, i);
 			redIndicator.setAgent(a);
 			greenIndicator.setAgent(a1);
 			blueIndicator.setAgent(a2);
 			yellowIndicator.setAgent(a3);
-			node.addSupervisorRole("red"+i, redIndicator);
-			node.addSupervisorRole("green"+i, greenIndicator);
-			node.addSupervisorRole("blue"+i, blueIndicator);
-			node.addSupervisorRole("yellow"+i, yellowIndicator);
-			node.addFollowerRole("screen", scf);
+			node.addSupervisorRole(redIndicator);
+			node.addSupervisorRole(greenIndicator);
+			node.addSupervisorRole(blueIndicator);
+			node.addSupervisorRole(yellowIndicator);
+			node.addFollowerRole(scf);
 			a.set(NODE, node);
 			a1.set(NODE, node);
 			a2.set(NODE, node);
@@ -238,61 +256,70 @@ public class AgentModel extends BaseAgentModel {
 			
 			//create personNode
 			MixedNode mixed = new MixedNode("p_"+i);
+			
 			for(int ind=0; ind<6; ind++){
-				RedFollower red = new RedFollower(0, "red"+ind);
-				GreenFollower green = new GreenFollower(0, "green"+ind);
-				BlueFollower blue = new BlueFollower(0, "blue"+ind);
-				YellowFollower yellow = new YellowFollower(0, "yellow"+ind);
-				
-				SubRedFollower sred = new SubRedFollower(0, "red"+ind);
-				SubGreenFollower sgreen = new SubGreenFollower(0, "green"+ind);
-				SubBlueFollower sblue = new SubBlueFollower(0, "blue"+ind);
-				SubYellowFollower syellow = new SubYellowFollower(0, "yellow"+ind);
-				
-				SubRedSupervisor sured = new SubRedSupervisor(0, "red"+ind);
-				SubGreenSupervisor sugreen = new SubGreenSupervisor(0, "green"+ind);
-				SubBlueSupervisor sublue = new SubBlueSupervisor(0, "blue"+ind);
-				SubYellowSupervisor suyellow = new SubYellowSupervisor(0, "yellow"+ind);
-				
-				red.setAgent(a5);
-				red.setWorld(world);
-				green.setAgent(a5);
-				green.setWorld(world);
-				blue.setAgent(a5);
-				blue.setWorld(world);
-				yellow.setAgent(a5);
-				yellow.setWorld(world);
-				
-				sred.setAgent(a5);
-				sred.setWorld(world);
-				sgreen.setAgent(a5);
-				sgreen.setWorld(world);
-				sblue.setAgent(a5);
-				sblue.setWorld(world);
-				syellow.setAgent(a5);
-				syellow.setWorld(world);
-				
-				sured.setAgent(a5);
-				sugreen.setAgent(a5);
-				sublue.setAgent(a5);
-				suyellow.setAgent(a5);
-				
-				mixed.addFollowerRole("red"+ind, red);
-				mixed.addFollowerRole("green"+ind, green);
-				mixed.addFollowerRole("blue"+ind, blue);
-				mixed.addFollowerRole("yellow"+ind, yellow);
-				
-				mixed.addFollowerRole("subred"+ind, sred);
-				mixed.addFollowerRole("subgreen"+ind, sgreen);
-				mixed.addFollowerRole("subblue"+ind, sblue);
-				mixed.addFollowerRole("subyellow"+ind, syellow);
-				
-				mixed.addSupervisorRole("subred"+ind, sured);
-				mixed.addSupervisorRole("subgreen"+ind, sugreen);
-				mixed.addSupervisorRole("subblue"+ind, sublue);
-				mixed.addSupervisorRole("subyellow"+ind, suyellow);
+				mixed.addGroupInfo("red"+ind, groupInfo);
+				mixed.addGroupInfo("blue"+ind, groupInfo2);
+				mixed.addGroupInfo("green"+ind, groupInfo3);
+				mixed.addGroupInfo("yellow"+ind, groupInfo4);
+				mixed.addGroupInfo("subred"+ind, groupInfo5);
+				mixed.addGroupInfo("subblue"+ind, groupInfo6);
+				mixed.addGroupInfo("subgreen"+ind, groupInfo7);
+				mixed.addGroupInfo("subyellow"+ind, groupInfo8);
 			}
 			
+			RedFollower red = new RedFollower(0);
+			GreenFollower green = new GreenFollower(0);
+			BlueFollower blue = new BlueFollower(0);
+			YellowFollower yellow = new YellowFollower(0);
+			
+			SubRedFollower sred = new SubRedFollower(0);
+			SubGreenFollower sgreen = new SubGreenFollower(0);
+			SubBlueFollower sblue = new SubBlueFollower(0);
+			SubYellowFollower syellow = new SubYellowFollower(0);
+			
+			SubRedSupervisor sured = new SubRedSupervisor(0);
+			SubGreenSupervisor sugreen = new SubGreenSupervisor(0);
+			SubBlueSupervisor sublue = new SubBlueSupervisor(0);
+			SubYellowSupervisor suyellow = new SubYellowSupervisor(0);
+			
+			red.setAgent(a5);
+			red.setWorld(world);
+			green.setAgent(a5);
+			green.setWorld(world);
+			blue.setAgent(a5);
+			blue.setWorld(world);
+			yellow.setAgent(a5);
+			yellow.setWorld(world);
+			
+			sred.setAgent(a5);
+			sred.setWorld(world);
+			sgreen.setAgent(a5);
+			sgreen.setWorld(world);
+			sblue.setAgent(a5);
+			sblue.setWorld(world);
+			syellow.setAgent(a5);
+			syellow.setWorld(world);
+			
+			sured.setAgent(a5);
+			sugreen.setAgent(a5);
+			sublue.setAgent(a5);
+			suyellow.setAgent(a5);
+			
+			mixed.addFollowerRole(red);
+			mixed.addFollowerRole(green);
+			mixed.addFollowerRole(blue);
+			mixed.addFollowerRole(yellow);
+			
+			mixed.addFollowerRole(sred);
+			mixed.addFollowerRole(sgreen);
+			mixed.addFollowerRole(sblue);
+			mixed.addFollowerRole(syellow);
+			
+			mixed.addSupervisorRole(sured);
+			mixed.addSupervisorRole(sugreen);
+			mixed.addSupervisorRole(sublue);
+			mixed.addSupervisorRole(suyellow);
 			a5.set(NODE, mixed);
 			
 			people.add(a5);

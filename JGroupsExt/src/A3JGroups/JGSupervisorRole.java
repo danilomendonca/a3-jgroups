@@ -103,6 +103,8 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		A3JGMessage mex = (A3JGMessage) msg.getObject();
 		if(mex.getValueID().equals("A3SupervisorChallenge")){
 			supChallenge(((Integer)mex.getContent()), msg.getSrc());
+		}else if(mex.getValueID().equals("A3SupervisorChange")){
+			submission();
 		}else if (mex.getType()) {
 			updateFromFollower(mex);
 		} else
@@ -243,6 +245,23 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 				e.printStackTrace();
 			}
 		}	
+	}
+	
+	private void submission(){
+		String groupName = chan.getClusterName();
+		String folName = node.getGroupInfo(groupName).getFollower().get(0);
+		
+		if(node.getFollowerRole(folName)!=null){
+			this.setActive(false);
+			node.getFollowerRole(folName).setActive(true);
+			node.getFollowerRole(folName).setChan(chan);
+			node.getFollowerRole(folName).setMap(map);
+			node.getFollowerRole(folName).setNotifier(notifier);
+			new Thread(node.getFollowerRole(folName)).start();
+			chan.setReceiver(node.getFollowerRole(folName));
+			node.putActiveRole(groupName, folName);
+		}else
+			node.terminate(groupName);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -33,7 +33,7 @@ public class ScreenSupervisor extends JGSupervisorRole {
 		ArrayList<Address> ad = new ArrayList<Address>();
 		Content c = ((Content) msg.getContent());
 		ad.add(c.getAd());
-		A3JGMessage mex = new A3JGMessage();
+		A3JGMessage mex = new A3JGMessage("info");
 		
 		if(rm.getNextDestination(c.getI(), c.getColour())!=null){
 			ArrayList<Place> pos = new ArrayList<Place>();
@@ -55,12 +55,12 @@ public class ScreenSupervisor extends JGSupervisorRole {
 	@Override
 	public void updateFromFollower(A3JGMessage msg) {
 		
-		if(msg.getContent().equals("Obstacle on")){
+		if(msg.getValueID().equals("Obstacle on")){
 			rm.setConfiguration(1);
-		}else if(msg.getContent().equals("Obstacle off")){
+		}else if(msg.getValueID().equals("Obstacle off")){
 			rm.setConfiguration(0);
 		}
-		A3JGMessage mex = new A3JGMessage();
+		A3JGMessage mex = new A3JGMessage("info");
 		Content c = new Content(null, 0, "black");
 		mex.setContent(c);
 		sendMessageToFollower(mex, null);
