@@ -21,6 +21,7 @@ public abstract class A3JGNode{
 	private Map<String, JChannel> channels = new HashMap<String, JChannel>();
 	private Map<String, String> activeRole = new HashMap<String, String>();
 	protected Map<String, GenericRole> waitings = new HashMap<String, GenericRole>();
+	private Object inNodeSharedMemory;
 	
 	
 	public A3JGNode(String ID){
@@ -81,8 +82,15 @@ public abstract class A3JGNode{
 	public String getID() {
 		return ID;
 	}
-
 	
+	public Object getInNodeSharedMemory() {
+		return inNodeSharedMemory;
+	}
+
+	public void setInNodeSharedMemory(Object inNodeSharedMemory) {
+		this.inNodeSharedMemory = inNodeSharedMemory;
+	}
+
 	public boolean joinGroup(String groupName) throws Exception {
 		
 		if(channels.get(groupName)!=null)
