@@ -1,9 +1,9 @@
-package jgexample1;
+package jgexampleSplitAndMerge;
 
 
 import A3JGroups.A3JGroup;
 
-public class Launch {
+public class LaunchSM {
 
 	public static void main(String[] args){
 		
@@ -20,25 +20,14 @@ public class Launch {
 			node2.addGroupInfo("red", groupInfo);
 			node2.addFollowerRole(new RedFollower(1));
 			node2.joinGroup("red");
-
-			Thread.sleep(5000);
-
+			
 			RedNode node3 = new RedNode("red3");
 			node3.addGroupInfo("red", groupInfo);
 			node3.addSupervisorRole(new RedSupervisor(1));
 			node3.addFollowerRole(new RedFollower(1));
 			node3.joinGroup("red");
 			
-			Thread.sleep(5000);
-			
-			node1.terminate("red");
-			
-			
-			Thread.sleep(10000);
-			
-			node3.terminate("red");	 
-
-			Thread.sleep(5000);
+			Thread.sleep(25000);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
