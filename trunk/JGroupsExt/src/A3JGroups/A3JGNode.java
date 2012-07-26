@@ -275,4 +275,76 @@ public abstract class A3JGNode{
 	    return false;
 	}
 	
+	public boolean joinSplitGroup(String groupName, JChannel jc, int port, boolean role) throws Exception {
+		
+		jc.getProtocolStack().findProtocol("UDP").setValue("mcast_port", port);
+		final JChannel chan = new JChannel(jc);
+		if(role)
+			channels.put("A3Split"+groupName, chan);
+		else{
+			terminate(groupName);
+			channels.put(groupName, chan);
+		}
+		
+		ReplicatedHashMap<String, Object> map = new ReplicatedHashMap<String, Object>(chan){
+	    	
+	    	public void receive(Message m){
+				if (chan.getReceiver() != null)
+					chan.getReceiver().receive(m);
+	    	}
+	    	
+	    	public void viewAccepted(View v){
+	    		if (chan.getReceiver() != null)
+	    			chan.getReceiver().viewAccepted(v);
+	    		
+	    		this.viewAcceptedOriginal(v);
+	    		
+	    	}
+	    };
+
+	    A3JGRHMNotification notifier = new A3JGRHMNotification();
+	    notifier.setNodeID(ID);
+	    map.addNotifier(notifier);
+	    chan.connect(groupName);
+	    
+	    map.start(timeout);
+	    
+	    if (groupInfo.containsKey(groupName)) {
+			String supName = getGroupInfo(groupName).getSupervisor().get(0);
+			String folName = getGroupInfo(groupName).getFollower().get(0);
+			if (map.get("A3Supervisor") == null && role) {
+				if (this.getSupervisorRole(supName) != null) {
+					if (map.putIfAbsent("A3Supervisor", chan.getAddress()) == null) {
+						this.getSupervisorRole(supName).setActive(true);
+						this.getSupervisorRole(supName).setChan(chan);
+						this.getSupervisorRole(supName).setMap(map);
+						this.getSupervisorRole(supName).setNotifier(notifier);
+						this.getSupervisorRole(supName).index = -1;
+						this.getSupervisorRole(supName).setSplitsup(true);
+						chan.setReceiver(this.getSupervisorRole(supName));
+						new Thread(this.getSupervisorRole(supName)).start();
+						putActiveRole("A3Split"+groupName, supName);
+						return true;
+					}
+				}
+			} else if (!role) {
+				if (this.getFollowerRole(folName) != null) {
+					this.getFollowerRole(folName).setActive(true);
+					this.getFollowerRole(folName).setChan(chan);
+					this.getFollowerRole(folName).setMap(map);
+					this.getFollowerRole(folName).setNotifier(notifier);
+					new Thread(this.getFollowerRole(folName)).start();
+					chan.setReceiver(this.getFollowerRole(folName));
+					putActiveRole(groupName, folName);
+					return true;
+				}
+			}
+		}
+	    if(role)
+	    	close("A3Split"+groupName);
+	    else
+	    	close(groupName);
+		return false;
+	}
+	
 }

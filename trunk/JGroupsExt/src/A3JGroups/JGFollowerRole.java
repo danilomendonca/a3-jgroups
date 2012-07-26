@@ -100,12 +100,13 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		if(msg.getValueID().equals("A3FitnessFunction")){
 			int fitness;
 			String groupName = this.chan.getClusterName();
+			if(groupName.contains("A3Split"))
+				groupName = groupName.substring(groupName.lastIndexOf("A3Split"));
 			String role = node.getGroupInfo(groupName).getSupervisor().get(0);
 			if(node.getSupervisorRole(role)!=null)
 				fitness = node.getSupervisorRole(role).fitnessFunc();
 			else
 				fitness = 0;
-			
 			map.put(chan.getAddressAsString(), fitness);
 			
 		}else if(msg.getValueID().equals("A3NewSupervisor")){
@@ -132,22 +133,29 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		}else if(msg.getValueID().equals("A3Deactivate")){
 			node.terminate(this.chan.getClusterName());
 		
-//		}else if(((String) msg.getValueID()).contains("A3MergeGroup")){
-//			String group = ((String) msg.getContent()).substring(9);
-//			try {
-//				node.joinGroup(group);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//			node.terminate(groupName);
-//			
-//		}else if(((String) msg.getValueID()).contains("A3JoinGroup")){
-//			String group = ((String) msg.getContent()).substring(9);
-//			try {
-//				node.joinGroup(group);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
+		}else if(msg.getValueID().equals("A3SplitNewSupervisor")){
+			int port = (Integer) msg.getContent();
+			try {
+				this.getNode().joinSplitGroup(this.getChan().getClusterName(), this.getChan(), port, true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else if(msg.getValueID().equals("A3SplitChange")){
+			int port = (Integer) msg.getContent();
+			try {
+				this.getNode().joinSplitGroup(this.getChan().getClusterName(), this.getChan(), port, false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else if(msg.getValueID().equals("A3MergeGroup")){
+			String groupName = this.getChan().getClusterName();
+			this.getNode().terminate(groupName);
+			try {
+				this.getNode().joinGroup(groupName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		}else if(msg.getValueID().equals("A3StayFollower")){
 			attempt = 0;
 		}else{

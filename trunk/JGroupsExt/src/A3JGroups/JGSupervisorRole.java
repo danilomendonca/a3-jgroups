@@ -24,6 +24,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	protected ReplicatedHashMap<String, Object> map;
 	protected MessageDelete deleter =  new MessageDelete();
 	private A3JGRHMNotification notifier;
+	private boolean splitsup = false;
 	
 
 	public JGSupervisorRole(int resourceCost) {
@@ -97,6 +98,14 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		deleter.setWaitTime(waitTime);
 	}
 	
+	public boolean isSplitsup() {
+		return splitsup;
+	}
+
+	public void setSplitsup(boolean splitsup) {
+		this.splitsup = splitsup;
+	}
+
 	public abstract void run();
 	
 	public void receive(Message msg) {
@@ -190,24 +199,25 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		deleter.toDelete(index);
 	}
 	
-	public void merge(String groupName) throws Exception{
-		A3JGMessage mex = new A3JGMessage("A3MergeGroup"+groupName);
+	public void merge(){
+		A3JGMessage mex = new A3JGMessage("A3MergeGroup");
 		sendMessageToFollower(mex, null);
-		node.joinGroup(groupName);
-		node.terminate(this.chan.getClusterName());
+		String groupName = this.getChan().getClusterName();
+		if(splitsup)
+			this.getNode().terminate("A3Split"+groupName);
+		else{
+			this.getNode().terminate(groupName);
+			try {
+				this.getNode().joinGroup(groupName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+			
 	}
-	
-	
-	public void join(String groupName) throws Exception{
-		A3JGMessage mex = new A3JGMessage("A3JoinGroup"+groupName);
-		sendMessageToFollower(mex, null);
-		node.joinGroup(groupName);
-	}
-	
-	//doesn't work
-	public void split(String newGroupName){
-		A3JGMessage mex = new A3JGMessage("A3FitnessFunction");
-		sendMessageToFollower(mex, null);
+
+	public void split(){
+		new Thread(new SplitManager(1000, map, chan)).start();
 	}
 	
 	private void supChallenge(int fit, Address ad){

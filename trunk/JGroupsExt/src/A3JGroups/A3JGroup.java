@@ -3,8 +3,6 @@ package A3JGroups;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
 public class A3JGroup {
 	
 	private Map<Integer, String> supervisor = new HashMap<Integer, String>();
@@ -49,6 +47,5 @@ public class A3JGroup {
 	public void setGroupDescriptor(String groupDescriptor) {
 		this.groupDescriptor = groupDescriptor;
 	}
-	
-	
+		
 }
