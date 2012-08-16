@@ -5,6 +5,17 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.blocks.ReplicatedHashMap;
 
+/**
+ * ElectionManager is a Thread used by the follower who carry out the election
+ * of the new supervisor. You have to define the electionTime (10000ms as 
+ * default) in which to await the results. 
+ * 
+ * The ElectionManager is created in automatic by the first follower of the 
+ * groupMember List of the Jchannel view.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public class ElectionManager implements Runnable{
 	
 	private boolean decide = true;

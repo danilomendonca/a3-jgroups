@@ -5,6 +5,14 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.blocks.ReplicatedHashMap;
 
+/**
+ * This class define the Thread able to split a group in two groups, in which the first group
+ * is the one that has as supervisor the same before the splitting, and the second has as 
+ * supervisor a node that is also follower in the first group.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public class SplitManager implements Runnable{
 	
 	private long splitTime;

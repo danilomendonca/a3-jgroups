@@ -11,6 +11,15 @@ import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
 import org.jgroups.blocks.ReplicatedHashMap;
 
+/**
+ * A new instance of this class is created each time a node can not be joined 
+ * in an immediate way to a group (due to a supervisor election). This object 
+ * is capable of receiving message, and of participating to the supervisor 
+ * election.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public class GenericRole extends ReceiverAdapter{
 
 	private A3JGNode node;

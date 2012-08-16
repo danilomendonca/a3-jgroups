@@ -3,6 +3,14 @@ package A3JGroups;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * A3JGroup is used to define the information relating to a group of A3. For each 
+ * group, you must create an instance of A3JGroup, with the respective information.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public class A3JGroup {
 	
 	private Map<Integer, String> supervisor = new HashMap<Integer, String>();
@@ -10,6 +18,16 @@ public class A3JGroup {
 	private String groupConnection;
 	private String groupDescriptor;
 	
+	
+	/**
+	 * THe constructor has as input the class name of the JGSupervisorRole and 
+	 * JGFollowerRole used as default roles of the group.
+	 * 
+	 * @param supervisorDef
+	 * 			JGSupervisorRole default class name.
+	 * @param followerDef
+	 * 			JGFollowerRole default class name.
+	 */
 	public A3JGroup(String supervisorDef, String followerDef) {
 		super();
 		supervisor.put(0, supervisorDef);
