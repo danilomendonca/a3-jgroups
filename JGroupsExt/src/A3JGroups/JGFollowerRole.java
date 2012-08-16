@@ -14,6 +14,15 @@ import org.jgroups.View;
 import org.jgroups.blocks.ReplicatedHashMap;
 
 
+/**
+ * JGFollowerRole must be extended in order to define a certain type of follower. You 
+ * must define the behavior of each follower implementing the run function. A followerRole
+ * can be used in more than one group, and different role can be used in the same group.
+ * In each group there are more follower that work with a supervisor.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable{
 
 	protected boolean active;
@@ -175,6 +184,14 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		}
     }
 	
+	/**
+	 * You have to use this function to send message to the supervisor.
+	 * 
+	 * @param mex
+	 * 			The A3JGMessage sent to the supervisor.
+	 * @return
+	 * 			True if the message is sent, false otherwise.
+	 */
 	public boolean sendMessageToSupervisor(A3JGMessage mex){
 		try {
 			if(!chan.getView().containsMember((Address) map.get("A3Supervisor")))
@@ -187,6 +204,15 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		return true;
 	}
 	
+	
+	/**
+	 * This function is used to send an update to the supervisor, using a message.
+	 * 
+	 * @param mex
+	 * 			The A3JGMessage sent to the supervisor.
+	 * @return
+	 * 			True if the message is sent, false otherwise.
+	 */
 	public boolean sendUpdateToSupervisor(A3JGMessage mex){
 		mex.setType(true);
 		try {
@@ -200,6 +226,11 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		return true;
 	}
 	
+	/**
+	 * This function is used to retrieve messages left in memory on ReplicatedHashMap.
+	 * @return
+	 * 			The list of A3JGMessage presents on the map.
+	 */
 	@SuppressWarnings("unchecked")
 	public List<A3JGMessage> getMessageOverTime(){
 		ArrayList<A3JGMessage> mex = new ArrayList<A3JGMessage>();
@@ -224,6 +255,15 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		return max;
 	}
 	
+	
+	/**
+	 * This function allows the follower to change is role while it is active.
+	 * 
+	 * @param config
+	 * 			The Integer key of the configuration that must be activated.
+	 * @return
+	 * 			True if the change has success, false otherwise.
+	 */
 	public boolean changeRoleInGroup(int config){
 		
 		String folName = node.getGroupInfo(chan.getClusterName()).getFollower().get(config);
@@ -241,6 +281,13 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 		return false;
 	}
 
+	/**
+	 * This function must be extended in order to define the behavior of the
+	 * follower when receives a message from the supervisor.
+	 * 
+	 * @param msg
+	 * 			Is the message sent by the supervisor.
+	 */
 	public abstract void messageFromSupervisor(A3JGMessage msg);
 		
 }

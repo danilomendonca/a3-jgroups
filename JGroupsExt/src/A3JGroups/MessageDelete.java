@@ -6,6 +6,14 @@ import java.util.HashMap;
 
 import org.jgroups.blocks.ReplicatedHashMap;
 
+/**
+ * MessageDelete is a Thread used by the supervisor in an automatic way to manage 
+ * messages stored in the ReplicatedHashMap. You have to define the waitTime 
+ * (30000ms as default) which is updated.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public class MessageDelete implements Runnable{
 	
 	private boolean active = false;
@@ -34,6 +42,12 @@ public class MessageDelete implements Runnable{
 		this.chiavi = chiavi;
 	}
 
+	/**
+	 * This function is called for manual removal of a message defined by index parameter.
+	 * 
+	 * @param index
+	 * 			The Integer key of message to be removed.
+	 */
 	public void toDelete(int index){
 		chiavi.remove(index);
 		map.remove("A3MessageInMemory_"+index);

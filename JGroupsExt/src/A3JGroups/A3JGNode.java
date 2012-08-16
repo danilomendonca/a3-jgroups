@@ -9,6 +9,24 @@ import org.jgroups.Message;
 import org.jgroups.View;
 import org.jgroups.blocks.ReplicatedHashMap;
 
+/**
+ * A3JGNode is the main element of A3. A node represents an element connected to 
+ * the network of distributed system. Each node can be part of any group, in the 
+ * limit of its resources. Contains two map of Roles (one for JGSupervisorRole 
+ * and one for JGFollowerRole),and a map with the details of each group that can 
+ * participate.
+ * 
+ * A3JGNode is used for join and leave a group of the distributed system. After 
+ * the creation of a node (with the public constructor), you must enter 
+ * information of groups which want to participate actively and roles required 
+ * to act in them.
+ * 
+ * Each A3JGNode has a unique identifier, and there is a space of shared memory
+ * between roles of different groups.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public abstract class A3JGNode{
 	
 	private int resourceThreshold;
@@ -91,6 +109,20 @@ public abstract class A3JGNode{
 		this.inNodeSharedMemory = inNodeSharedMemory;
 	}
 
+	/**
+	 * This function is used for join a group. The function tries to establish 
+	 * a connection with the group defined by the parameter passed in. If the 
+	 * node meets the conditions of access, the connection is successful, and 
+	 * activates the appropriate role, otherwise there is no established link 
+	 * with the group.
+	 * 
+	 * @param groupName
+	 * 			The name of the group to join.
+	 * @return
+	 * 			True if join has success, false otherwise.
+	 * @throws Exception
+	 * 			If problems occur during the connection with the group.
+	 */
 	public boolean joinGroup(String groupName) throws Exception {
 		
 		if(channels.get(groupName)!=null)
@@ -190,6 +222,13 @@ public abstract class A3JGNode{
 		activeRole.remove(groupName);
 	}
 	
+	/**
+	 * This function is called to terminate participation in the group passed 
+	 * in input.
+	 * 
+	 * @param groupName
+	 * 			The name of the group to terminate.
+	 */
 	public void terminate(String groupName){
 		String role = getActiveRole(groupName);
 		if(this.getSupervisorRole(role)!=null && this.getSupervisorRole(role).isActive()){
@@ -199,6 +238,23 @@ public abstract class A3JGNode{
 		close(groupName);
 	}
 	
+	/**
+	 * This function is similar to the Join, with the difference that the node 
+	 * can join the group only as a supervisor. If the node cannot be a 
+	 * supervisor in the specified group, the join fails. There is the 
+	 * possibility to have a challenge with the current supervisor of the group 
+	 * specified.
+	 * 
+	 * @param groupName
+	 * 			The name of the group to join.
+	 * @param challenge
+	 * 			If true there is a challenge with the current supervisor, if 
+	 * 			false this node becomes the new supervisor.
+	 * @return
+	 * 			True if join as supervisor has success, false otherwise.
+	 * @throws Exception
+	 * 			If problems occur during the connection with the group.
+	 */
 	public boolean joinAsSupervisor(String groupName, boolean challenge) throws Exception{
 		
 		if (channels.get(groupName)!=null)

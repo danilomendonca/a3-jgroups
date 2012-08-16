@@ -7,6 +7,12 @@ import org.jgroups.Address;
 import org.jgroups.View;
 import org.jgroups.blocks.ReplicatedHashMap;
 
+/**
+ * This class is the Notification used by the ReplicatedHashMap of JGroups.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public class A3JGRHMNotification implements ReplicatedHashMap.Notification<String, Object>{
 	private String nodeID;
 	@Override

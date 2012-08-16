@@ -14,6 +14,15 @@ import org.jgroups.View;
 import org.jgroups.blocks.ReplicatedHashMap;
 
 
+/**
+ *	JGSupervisorRole must be extended in order to define a certain type of supervisor. You 
+ * must define the behavior of each supervisor implementing the run function. Only one rule
+ * at a time can be active in a group. In each group there is only a supervisor that works 
+ * with the followers. A group, for exist, must have an active supervisorRole in its members.
+ * 
+ * @author bett.marco88@gmail.com
+ *
+ */
 public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnable{
 
 	protected boolean active;
@@ -124,6 +133,16 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		
     }
 	
+	/**
+	 * You have to use this function to send message to followers.
+	 * 
+	 * @param mex
+	 * 			The A3JGMessage sent to followers.
+	 * @param dest
+	 * 			The list of followers who will receive the message. 			
+	 * @return
+	 * 			True if the message is sent, false otherwise.
+	 */
 	public boolean sendMessageToFollower(A3JGMessage mex, List<Address> dest){
 		mex.setType(false);
 		Message msg = new Message();
@@ -157,6 +176,23 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	}
 	
 	
+	/**
+	 * You have to use this function to send message, that will be saved over time, to followers.
+	 * If days, hours and minutes are equal to 0, the message is valid for infinite.
+	 * 
+	 * @param mex
+	 * 			The A3JGMessage sent to followers.
+	 * @param dest
+	 * 			The list of followers who will receive the message. 
+	 * @param days
+	 * 			The number of days of validity.
+	 * @param hours
+	 * 			The number of hours of validity.
+	 * @param minutes	
+	 * 			The number of minutes of validity.		
+	 * @return
+	 * 			True if the message is sent, false otherwise.
+	 */
 	@SuppressWarnings("unchecked")
 	public int sendMessageOverTime(A3JGMessage mex, List<Address> dest, int days, int hours, int minutes){
 		if(dest!=null)
@@ -195,10 +231,18 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		return index;
 	}
 
+	/**
+	 * The function is used for remove a message from the ReplicatedHashMap
+	 * @param index
+	 * 			The Integer key of the message to remove.
+	 */
 	public void removeMessage(int index){
 		deleter.toDelete(index);
 	}
 	
+	/**
+	 * Called after a split(), is used for merging the split groups.
+	 */
 	public void merge(){
 		A3JGMessage mex = new A3JGMessage("A3MergeGroup");
 		sendMessageToFollower(mex, null);
@@ -216,6 +260,9 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 			
 	}
 
+	/**
+	 * Called for split the group.
+	 */
 	public void split(){
 		new Thread(new SplitManager(1000, map, chan)).start();
 	}
@@ -274,6 +321,14 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 			node.terminate(groupName);
 	}
 	
+	/**
+	 * This function allows the supervisor to change is role while it is active.
+	 * 
+	 * @param config
+	 * 			The Integer key of the configuration that must be activated.
+	 * @return
+	 * 			True if the change has success, false otherwise.
+	 */
 	@SuppressWarnings("unchecked")
 	public boolean changeRoleInGroup(int config){
 		
@@ -300,8 +355,32 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 		return false;
 	}
 
+	/**
+	 * This function must be extended in order to define the behavior of the
+	 * supervisor when receives a message from the follower.
+	 * 
+	 * @param msg
+	 * 			Is the message sent by the follower.
+	 */
 	public abstract void messageFromFollower(A3JGMessage msg);
+	
+	/**
+	 * This function must be extended in order to define the behavior of the
+	 * supervisor when receives an update from the follower.
+	 * 
+	 * @param msg
+	 * 			Is the update message sent by the follower.
+	 */
 	public abstract void updateFromFollower(A3JGMessage msg);
+	
+	
+	/**
+	 * This function return the fitness value of the supervisor. This value is used for choose
+	 * the best candidate for be the new supervisor during an election.
+	 * 
+	 * @return
+	 * 			The Integer value of fitness.
+	 */
 	public abstract int fitnessFunc();
 	
 }
