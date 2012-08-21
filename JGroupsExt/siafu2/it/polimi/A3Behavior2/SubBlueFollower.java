@@ -1,13 +1,13 @@
 package it.polimi.A3Behavior2;
 
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGFollowerRole;
+import A3JGroups.A3JGFollowerRole;
 import de.nec.nle.siafu.exceptions.NothingNearException;
 import de.nec.nle.siafu.model.Agent;
 import de.nec.nle.siafu.model.Place;
 import de.nec.nle.siafu.model.World;
 
-public class SubBlueFollower extends JGFollowerRole{
+public class SubBlueFollower extends A3JGFollowerRole{
 	
 	private Agent agent;
 	private World world;

@@ -23,7 +23,7 @@ import org.jgroups.blocks.ReplicatedHashMap;
  * @author bett.marco88@gmail.com
  *
  */
-public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnable{
+public abstract class A3JGSupervisorRole extends ReceiverAdapter implements Runnable{
 
 	protected boolean active;
 	private int resourceCost;
@@ -36,7 +36,7 @@ public abstract class JGSupervisorRole extends ReceiverAdapter implements Runnab
 	private boolean splitsup = false;
 	
 
-	public JGSupervisorRole(int resourceCost) {
+	public A3JGSupervisorRole(int resourceCost) {
 		super();
 		this.resourceCost = resourceCost;
 	}

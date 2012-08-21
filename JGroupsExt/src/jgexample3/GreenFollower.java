@@ -1,11 +1,11 @@
 package jgexample3;
 
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGFollowerRole;
+import A3JGroups.A3JGFollowerRole;
 
 
 
-public class GreenFollower extends JGFollowerRole {
+public class GreenFollower extends A3JGFollowerRole {
 	
 	public GreenFollower(int resourceCost) {
 		super(resourceCost);

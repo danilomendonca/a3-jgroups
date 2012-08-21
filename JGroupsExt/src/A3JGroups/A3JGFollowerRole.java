@@ -23,7 +23,7 @@ import org.jgroups.blocks.ReplicatedHashMap;
  * @author bett.marco88@gmail.com
  *
  */
-public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable{
+public abstract class A3JGFollowerRole extends ReceiverAdapter implements Runnable{
 
 	protected boolean active;
 	private int resourceCost;
@@ -36,7 +36,7 @@ public abstract class JGFollowerRole extends ReceiverAdapter implements Runnable
 	private int attempt = 0;
 	private A3JGRHMNotification notifier;
 	
-	public JGFollowerRole(int resourceCost) {
+	public A3JGFollowerRole(int resourceCost) {
 		super();
 		this.resourceCost = resourceCost;
 	}
