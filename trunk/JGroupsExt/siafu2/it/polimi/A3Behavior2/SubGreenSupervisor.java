@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import org.jgroups.Address;
 
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGSupervisorRole;
+import A3JGroups.A3JGSupervisorRole;
 import de.nec.nle.siafu.model.Agent;
 import de.nec.nle.siafu.model.Place;
 
-public class SubGreenSupervisor  extends JGSupervisorRole{
+public class SubGreenSupervisor  extends A3JGSupervisorRole{
 	
 	private Agent agent;
 	

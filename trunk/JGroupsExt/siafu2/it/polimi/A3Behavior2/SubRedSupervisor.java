@@ -7,9 +7,9 @@ import org.jgroups.Address;
 import de.nec.nle.siafu.model.Agent;
 import de.nec.nle.siafu.model.Place;
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGSupervisorRole;
+import A3JGroups.A3JGSupervisorRole;
 
-public class SubRedSupervisor extends JGSupervisorRole{
+public class SubRedSupervisor extends A3JGSupervisorRole{
 	
 	private Agent agent;
 	

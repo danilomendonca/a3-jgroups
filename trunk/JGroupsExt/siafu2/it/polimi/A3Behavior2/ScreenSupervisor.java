@@ -10,9 +10,9 @@ import org.jgroups.Address;
 import de.nec.nle.siafu.model.Place;
 
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGSupervisorRole;
+import A3JGroups.A3JGSupervisorRole;
 
-public class ScreenSupervisor extends JGSupervisorRole {
+public class ScreenSupervisor extends A3JGSupervisorRole {
 
 	WorldModel wm;
 	RoutingManager rm;

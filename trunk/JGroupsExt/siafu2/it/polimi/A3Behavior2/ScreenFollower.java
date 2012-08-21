@@ -1,9 +1,9 @@
 package it.polimi.A3Behavior2;
 
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGFollowerRole;
+import A3JGroups.A3JGFollowerRole;
 
-public class ScreenFollower extends JGFollowerRole {
+public class ScreenFollower extends A3JGFollowerRole {
 
 	private int index;
 	private boolean obs = false;

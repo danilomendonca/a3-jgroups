@@ -3,9 +3,9 @@ package jgexampleSplitAndMerge;
 import org.jgroups.View;
 
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGSupervisorRole;
+import A3JGroups.A3JGSupervisorRole;
 
-public class RedSupervisor extends JGSupervisorRole {
+public class RedSupervisor extends A3JGSupervisorRole {
 
 	private int fitness = 2;
 	private View vista;

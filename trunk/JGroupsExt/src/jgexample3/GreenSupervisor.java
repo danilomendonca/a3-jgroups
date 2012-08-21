@@ -3,10 +3,10 @@ package jgexample3;
 import org.jgroups.View;
 
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGSupervisorRole;
+import A3JGroups.A3JGSupervisorRole;
 
 
-public class GreenSupervisor extends JGSupervisorRole {
+public class GreenSupervisor extends A3JGSupervisorRole {
 
 	private int n = 0;
 	private int pc = 0;

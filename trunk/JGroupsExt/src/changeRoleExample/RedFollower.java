@@ -2,9 +2,9 @@ package changeRoleExample;
 
 
 import A3JGroups.A3JGMessage;
-import A3JGroups.JGFollowerRole;
+import A3JGroups.A3JGFollowerRole;
 
-public class RedFollower extends JGFollowerRole{
+public class RedFollower extends A3JGFollowerRole{
 
 	private int temp;
 	public boolean prova = false;

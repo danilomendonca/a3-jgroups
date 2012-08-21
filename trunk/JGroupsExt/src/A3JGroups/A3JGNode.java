@@ -33,8 +33,8 @@ public abstract class A3JGNode{
 	private String ID;
 	private long timeout = 10000;
 	
-	private Map<String, JGSupervisorRole> supervisorRoles = new HashMap<String, JGSupervisorRole>(); 
-	private Map<String, JGFollowerRole> followerRoles = new HashMap<String, JGFollowerRole>();
+	private Map<String, A3JGSupervisorRole> supervisorRoles = new HashMap<String, A3JGSupervisorRole>(); 
+	private Map<String, A3JGFollowerRole> followerRoles = new HashMap<String, A3JGFollowerRole>();
 	private Map<String, A3JGroup> groupInfo = new HashMap<String, A3JGroup>();
 	private Map<String, JChannel> channels = new HashMap<String, JChannel>();
 	private Map<String, String> activeRole = new HashMap<String, String>();
@@ -75,7 +75,7 @@ public abstract class A3JGNode{
 		return groupInfo.get(groupName);
 	}
 
-	public void addSupervisorRole(JGSupervisorRole role) {
+	public void addSupervisorRole(A3JGSupervisorRole role) {
 		this.supervisorRoles.put(role.getClass().getName(), role);
 		role.setNode(this);
 	}
@@ -84,15 +84,15 @@ public abstract class A3JGNode{
 		this.timeout = timeout;
 	}
 
-	public JGSupervisorRole getSupervisorRole(String className) {
+	public A3JGSupervisorRole getSupervisorRole(String className) {
 		return supervisorRoles.get(className);
 	}
 	
-	public JGFollowerRole getFollowerRole(String className) {
+	public A3JGFollowerRole getFollowerRole(String className) {
 		return followerRoles.get(className);
 	}
 	
-	public void addFollowerRole(JGFollowerRole role) {
+	public void addFollowerRole(A3JGFollowerRole role) {
 		this.followerRoles.put(role.getClass().getName(), role);
 		role.setNode(this);
 	}
