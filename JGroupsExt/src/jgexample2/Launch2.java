@@ -10,8 +10,10 @@ public class Launch2 {
 	public static void main(String[] args){
 		
 		try {
-			A3JGroup groupInfo = new A3JGroup(RedSupervisor.class.getCanonicalName(), RedFollower.class.getCanonicalName());
-			A3JGroup groupInfo2 = new A3JGroup(BlueSupervisor.class.getCanonicalName(), BlueFollower.class.getCanonicalName());
+			A3JGroup groupInfo = new A3JGroup(RedSupervisor.class.getCanonicalName(),
+					RedFollower.class.getCanonicalName());
+			A3JGroup groupInfo2 = new A3JGroup(BlueSupervisor.class.getCanonicalName(),
+					BlueFollower.class.getCanonicalName());
 			
 			MixedNode node1 = new MixedNode("red1");
 			node1.addGroupInfo("red", groupInfo);

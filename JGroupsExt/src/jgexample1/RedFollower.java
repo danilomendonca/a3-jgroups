@@ -7,7 +7,6 @@ import A3JGroups.A3JGFollowerRole;
 public class RedFollower extends A3JGFollowerRole{
 
 	private int temp;
-	public boolean prova = false;
 	
 	public RedFollower(int resourceCost) {
 		super(resourceCost);
@@ -20,8 +19,6 @@ public class RedFollower extends A3JGFollowerRole{
 			
 			temp = (int) (Math.random()*35);
 			System.out.println(this.getNode().getID()+" "+temp);
-			if(prova)
-				showMessage();
 			try {
 				Thread.sleep(1500);
 			} catch (InterruptedException e) {
@@ -40,9 +37,6 @@ public class RedFollower extends A3JGFollowerRole{
 		}
 	}
 	
-	public void showMessage(){
-		System.out.println(map);
-	}
 
 
 }
