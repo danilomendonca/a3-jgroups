@@ -45,7 +45,6 @@ public class Prova {
 		node4.addGroupInfo("red", groupInfo);
 		node4.addSupervisorRole(red4);
 		node4.addFollowerRole(new RedFollower(1));
-		((RedFollower) node2.getFollowerRole("red")).prova=true;
 		node4.joinGroup("red");
 		RedNode node5 = new RedNode("red5");
 		node5.addGroupInfo("red", groupInfo);
@@ -55,9 +54,6 @@ public class Prova {
 
 		
 		Thread.sleep(2000);
-		
-		System.out.println("scrivo sulla mappa***********************************************************");
-		((RedSupervisor) node1.getSupervisorRole("red")).writeOnMap();
 		
 		Thread.sleep(2000);
 		
@@ -77,8 +73,6 @@ public class Prova {
 		
 		Thread.sleep(12000);
 		
-		System.out.println("scrivo sulla mappa***********************************************************");
-		((RedSupervisor) node6.getSupervisorRole("red")).writeOnMap();
 	}
 
 }

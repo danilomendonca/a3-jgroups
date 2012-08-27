@@ -37,10 +37,9 @@ public class RedSupervisor extends A3JGSupervisorRole {
 			}
 			A3JGMessage msg = new A3JGMessage("temperature");
 			sendMessageToFollower(msg, null);
-			System.out.println("["+this.getNode().getID()+"] Sending message to followers...  " + (vista.getMembers().size()-1));
-			
-			
-		}
+			System.out.println("["+this.getNode().getID()+"] Sending " +
+					"message to followers...  " + (vista.getMembers().size()-1));
+			}
 	}
 
 	@Override
@@ -53,7 +52,8 @@ public class RedSupervisor extends A3JGSupervisorRole {
 			}
 			avarage = (avarage/(vista.getMembers().size()-1));
 			temp = new ArrayList<Integer>();
-			System.out.println(this.getNode().getID()+" The average temperature is " + avarage);
+			System.out.println(this.getNode().getID()+" The average temperature is "
+					+ avarage);
 			
 		}
 	}
@@ -68,8 +68,5 @@ public class RedSupervisor extends A3JGSupervisorRole {
 		return fitness;
 	}
 	
-	public void writeOnMap(){
-		map.put("test di prova", "vediamo se c'è");
-	}
 
 }

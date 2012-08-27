@@ -33,7 +33,8 @@ public class BlueSupervisor extends A3JGSupervisorRole {
 						e.printStackTrace();
 					}
 					
-					System.out.println("["+this.getNode().getID()+"] Sending message to blue followers... "+(vista.getMembers().size()-1));
+					System.out.println("["+this.getNode().getID()+"] Sending message" +
+							" to blue followers... "+(vista.getMembers().size()-1));
 					A3JGMessage msg = new A3JGMessage("people");
 					sendMessageToFollower(msg, null);
 				
@@ -45,7 +46,8 @@ public class BlueSupervisor extends A3JGSupervisorRole {
 		people += (Integer) msg.getContent();
 		n++;
 		if(n==(vista.getMembers().size()-1)){
-			System.out.println("["+this.getNode().getID()+"] The total number of people is " + people);
+			System.out.println("["+this.getNode().getID()+"] The total " +
+					"number of people is " + people);
 			n=0;
 			people=0;
 		}		

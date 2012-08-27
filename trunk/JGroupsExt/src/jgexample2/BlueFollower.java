@@ -14,12 +14,10 @@ public class BlueFollower extends A3JGFollowerRole {
 	
 	@Override
 	public void run() {
-		
 		while (this.active) {
-			
 			people = (int) (Math.random()*35);
-			System.out.println("["+this.getNode().getID()+"] number of people: "+people);
-			
+			System.out.println("["+this.getNode().getID()+"] number " +
+					"of people: "+people);
 			try {
 				Thread.sleep(2500);
 			} catch (InterruptedException e) {

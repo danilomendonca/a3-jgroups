@@ -8,7 +8,8 @@ public class Launch {
 	public static void main(String[] args){
 		
 		try {
-			A3JGroup groupInfo = new A3JGroup(RedSupervisor.class.getCanonicalName(), RedFollower.class.getCanonicalName());
+			A3JGroup groupInfo = new A3JGroup(RedSupervisor.class.getCanonicalName(), 
+					RedFollower.class.getCanonicalName());
 			groupInfo.addGroupConnection("utils/udp.xml");
 			
 			RedNode node1 = new RedNode("red1");
