@@ -259,6 +259,8 @@ public abstract class A3JGNode{
 		
 		if (channels.get(groupName)!=null)
 			return false;
+		if(groupInfo.get(groupName)==null)
+			return false;
 		
 		final JChannel chan;
 		if(groupInfo.get(groupName).getGroupConnection()!=null)

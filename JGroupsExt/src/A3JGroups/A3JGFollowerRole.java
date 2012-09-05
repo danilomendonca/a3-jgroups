@@ -15,7 +15,7 @@ import org.jgroups.blocks.ReplicatedHashMap;
 
 
 /**
- * JGFollowerRole must be extended in order to define a certain type of follower. You 
+ * A3JGFollowerRole must be extended in order to define a certain type of follower. You 
  * must define the behavior of each follower implementing the run function. A followerRole
  * can be used in more than one group, and different role can be used in the same group.
  * In each group there are more follower that work with a supervisor.
@@ -27,7 +27,6 @@ public abstract class A3JGFollowerRole extends ReceiverAdapter implements Runnab
 
 	protected boolean active;
 	private int resourceCost;
-	private String pathConfig;
 	private JChannel chan;
 	private A3JGNode node;
 	protected ReplicatedHashMap<String, Object> map;
@@ -47,10 +46,6 @@ public abstract class A3JGFollowerRole extends ReceiverAdapter implements Runnab
 
 	public void setResourceCost(int resourceCost) {
 		this.resourceCost = resourceCost;
-	}
-
-	public String getGroupName() {
-		return pathConfig;
 	}
 	
 	public void setNode(A3JGNode node){
