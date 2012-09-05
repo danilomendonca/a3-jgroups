@@ -15,7 +15,7 @@ import org.jgroups.blocks.ReplicatedHashMap;
 
 
 /**
- *	JGSupervisorRole must be extended in order to define a certain type of supervisor. You 
+ *	A3JGSupervisorRole must be extended in order to define a certain type of supervisor. You 
  * must define the behavior of each supervisor implementing the run function. Only one rule
  * at a time can be active in a group. In each group there is only a supervisor that works 
  * with the followers. A group, for exist, must have an active supervisorRole in its members.
@@ -194,7 +194,8 @@ public abstract class A3JGSupervisorRole extends ReceiverAdapter implements Runn
 	 * 			True if the message is sent, false otherwise.
 	 */
 	@SuppressWarnings("unchecked")
-	public int sendMessageOverTime(A3JGMessage mex, List<Address> dest, int days, int hours, int minutes){
+	public int sendMessageOverTime(A3JGMessage mex, List<Address> dest, 
+			int days, int hours, int minutes){
 		if(dest!=null)
 			mex.setDest(dest);
 		mex.setType(false);
