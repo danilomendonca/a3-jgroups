@@ -27,6 +27,7 @@ public abstract class A3JGSupervisorRole extends ReceiverAdapter implements Runn
 
 	protected boolean active;
 	private int resourceCost;
+	private long splitTime = 1000;
 	protected int index;
 	private JChannel chan;
 	protected A3JGNode node;
@@ -65,6 +66,14 @@ public abstract class A3JGSupervisorRole extends ReceiverAdapter implements Runn
 		this.node = node;
 	}
 	
+	public long getSplitTime() {
+		return splitTime;
+	}
+
+	public void setSplitTime(long splitTime) {
+		this.splitTime = splitTime;
+	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
@@ -265,7 +274,7 @@ public abstract class A3JGSupervisorRole extends ReceiverAdapter implements Runn
 	 * Called for split the group.
 	 */
 	public void split(){
-		new Thread(new SplitManager(1000, map, chan)).start();
+		new Thread(new SplitManager(splitTime, map, chan)).start();
 	}
 	
 	private void supChallenge(int fit, Address ad){
