@@ -205,11 +205,8 @@ public abstract class A3JGSupervisorRole extends ReceiverAdapter implements Runn
 	@SuppressWarnings("unchecked")
 	public int sendMessageOverTime(A3JGMessage mex, List<Address> dest, 
 			int days, int hours, int minutes){
-		if(dest!=null)
-			mex.setDest(dest);
 		mex.setType(false);
-		Message msg = new Message();
-		msg.setObject(mex);
+		sendMessageToFollower(mex, dest);
 		index++;
 		Calendar c = Calendar.getInstance();
 		if (days == 0 && hours == 0 && minutes == 0) {
