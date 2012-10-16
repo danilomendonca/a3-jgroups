@@ -1,9 +1,6 @@
 package A3JGroups;
 
 import java.io.Serializable;
-import java.util.List;
-
-import org.jgroups.Address;
 
 
 /**
@@ -21,7 +18,6 @@ public class A3JGMessage implements Serializable{
 	//true if is an update message, false otherwise
 	private boolean type;
 	private Object content;
-	public List<Address> dest = null;
 	public String valueID;
 	
 	/**
@@ -73,10 +69,6 @@ public class A3JGMessage implements Serializable{
 
 	public void setValueID(String valueID) {
 		this.valueID = valueID;
-	}
-
-	public void setDest(List<Address> dest) {
-		this.dest = dest;
 	}
 
 	@Override
