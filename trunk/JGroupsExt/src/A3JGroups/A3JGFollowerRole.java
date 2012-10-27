@@ -33,6 +33,7 @@ public abstract class A3JGFollowerRole extends ReceiverAdapter implements Runnab
 	private ElectionManager em;
 	private long electionTime = 1000;
 	private int attempt = 0;
+	private int maxAttempt = 3;
 	private A3JGRHMNotification notifier;
 	
 	public A3JGFollowerRole(int resourceCost) {
@@ -96,6 +97,14 @@ public abstract class A3JGFollowerRole extends ReceiverAdapter implements Runnab
 		this.notifier = notifier;
 	}
 	
+	public int getMaxAttempt() {
+		return maxAttempt;
+	}
+
+	public void setMaxAttempt(int maxAttempt) {
+		this.maxAttempt = maxAttempt;
+	}
+
 	public abstract void run();
 	
 	@SuppressWarnings("unchecked")
@@ -168,14 +177,21 @@ public abstract class A3JGFollowerRole extends ReceiverAdapter implements Runnab
 	}
 	
 	public void viewAccepted(View view) {
-		if (!view.getMembers().contains(map.get("A3Supervisor")) && view.getMembers().get(0).equals(chan.getAddress()) && attempt < 4) {
-			map.put("A3Change", chan.getAddress());
-			attempt++;
-			if(em!=null){
-				em.setDecide(false);
+		if (!view.getMembers().contains(map.get("A3Supervisor")) && view.getMembers().get(0).equals(chan.getAddress())) {
+			if(map.get("A3JGElectionAttempt")!=null)
+				attempt = (Integer) map.get("A3JGElectionAttempt");
+			if (attempt < maxAttempt) {
+				map.put("A3Change", chan.getAddress());
+				attempt++;
+				map.put("A3JGElectionAttempt",attempt);
+				if((em==null) || (em!=null && !em.isDecTake())){
+					if (em != null) {
+						em.setDecide(false);
+					}
+					em = new ElectionManager(electionTime, map, chan);
+					new Thread(em).start();
+				}
 			}
-			em = new ElectionManager(electionTime, map, chan);
-			new Thread(em).start();
 		}
     }
 	
