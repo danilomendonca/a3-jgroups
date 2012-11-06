@@ -181,6 +181,7 @@ public abstract class A3JGFollowerRole extends ReceiverAdapter implements Runnab
 			if(map.get("A3JGElectionAttempt")!=null)
 				attempt = (Integer) map.get("A3JGElectionAttempt");
 			if (attempt < maxAttempt) {
+				map.put("A3FitnessFunction", true);
 				map.put("A3Change", chan.getAddress());
 				attempt++;
 				map.put("A3JGElectionAttempt",attempt);

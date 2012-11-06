@@ -168,6 +168,7 @@ public abstract class A3JGNode{
 			if (map.get("A3Supervisor") == null) {
 				if (this.getSupervisorRole(supName) != null) {
 					if (map.putIfAbsent("A3Supervisor", chan.getAddress()) == null) {
+						map.remove("A3FitnessFunction");
 						this.getSupervisorRole(supName).setActive(true);
 						this.getSupervisorRole(supName).setChan(chan);
 						this.getSupervisorRole(supName).setMap(map);
