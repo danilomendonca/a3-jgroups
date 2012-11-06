@@ -46,7 +46,7 @@ public class ElectionManager implements Runnable{
 			
 			Thread.sleep(electionTime);
 			
-			if(decide){
+			if(decide && chan.getView()!=null){
 				map.put("A3JGElectionAttempt",0);
 				decTake = true;
 				int max = 0;
