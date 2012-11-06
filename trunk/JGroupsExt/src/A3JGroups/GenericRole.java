@@ -107,10 +107,27 @@ public class GenericRole extends ReceiverAdapter{
 			else
 				fitness = 0;
 			map.put(chan.getAddressAsString(), fitness);
-		}
-		if(map.get("A3Deactivate")!=null){
+		
+		}else if(map.get("A3Deactivate")!=null){
 			node.waitings.remove(this.chan.getClusterName());
 			node.terminate(this.chan.getClusterName());
+		
+		}else {
+			String groupName = this.chan.getClusterName();
+			String role = node.getGroupInfo(groupName).getFollower().get(0);
+			node.putActiveRole(groupName, role);
+			if(node.getFollowerRole(role)!=null){
+				node.getFollowerRole(role).setActive(true);
+				node.getFollowerRole(role).setChan(chan);
+				node.getFollowerRole(role).setMap(map);
+				node.getFollowerRole(role).setNotifier(notifier);
+				chan.setReceiver(node.getFollowerRole(role));
+				new Thread(node.getFollowerRole(role)).start();
+
+			}else{
+				node.close(groupName);
+			}
+			node.waitings.remove(groupName);
 		}
 	}
 	
