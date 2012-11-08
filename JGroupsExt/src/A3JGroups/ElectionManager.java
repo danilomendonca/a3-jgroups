@@ -20,7 +20,7 @@ public class ElectionManager implements Runnable{
 	
 	private boolean decide = true;
 	private boolean decTake = false;
-	private long electionTime = 10000;
+	private long electionTime;
 	private ReplicatedHashMap<String, Object> map;
 	private JChannel chan;
 
@@ -47,7 +47,6 @@ public class ElectionManager implements Runnable{
 			Thread.sleep(electionTime);
 			
 			if(decide && chan.getView()!=null){
-				map.put("A3JGElectionAttempt",0);
 				decTake = true;
 				int max = 0;
 				Address newSup = null;

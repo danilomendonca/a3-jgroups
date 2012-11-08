@@ -177,21 +177,16 @@ public abstract class A3JGFollowerRole extends ReceiverAdapter implements Runnab
 	}
 	
 	public void viewAccepted(View view) {
-		if (!view.getMembers().contains(map.get("A3Supervisor")) && view.getMembers().get(0).equals(chan.getAddress())) {
-			if(map.get("A3JGElectionAttempt")!=null)
-				attempt = (Integer) map.get("A3JGElectionAttempt");
-			if (attempt < maxAttempt) {
-				map.put("A3FitnessFunction", true);
-				map.put("A3Change", chan.getAddress());
-				attempt++;
-				map.put("A3JGElectionAttempt",attempt);
-				if((em==null) || (em!=null && !em.isDecTake())){
-					if (em != null) {
-						em.setDecide(false);
-					}
-					em = new ElectionManager(electionTime, map, chan);
-					new Thread(em).start();
+		if (!view.getMembers().contains(map.get("A3Supervisor")) && view.getMembers().get(0).equals(chan.getAddress()) && attempt < maxAttempt) {
+			map.put("A3FitnessFunction", true);
+			map.put("A3Change", chan.getAddress());
+			attempt++;
+			if ((em == null) || (em != null && !em.isDecTake())) {
+				if (em != null) {
+					em.setDecide(false);
 				}
+				em = new ElectionManager(electionTime, map, chan);
+				new Thread(em).start();
 			}
 		}
     }
