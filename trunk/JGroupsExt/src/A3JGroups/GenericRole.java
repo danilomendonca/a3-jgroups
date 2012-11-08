@@ -26,6 +26,7 @@ public class GenericRole extends ReceiverAdapter{
 	private JChannel chan;
 	private ReplicatedHashMap<String, Object> map;
 	private A3JGRHMNotification notifier;
+	private int todo = 0;
 	
 	
 	public GenericRole(A3JGNode node, JChannel chan, ReplicatedHashMap<String, Object> map, A3JGRHMNotification notifier) {
@@ -72,10 +73,12 @@ public class GenericRole extends ReceiverAdapter{
 			}
 			new Thread(node.getSupervisorRole(role)).start();
 			node.waitings.remove(groupName);
+			endGeneric();
 			
 		}else if(msg.getValueID().equals("A3Deactivate")){
 			node.terminate(this.chan.getClusterName());
 			node.waitings.remove(this.chan.getClusterName());
+			endGeneric();
 			
 		}else if(msg.getValueID().equals("A3StayFollower")){
 			
@@ -94,6 +97,7 @@ public class GenericRole extends ReceiverAdapter{
 				node.close(groupName);
 			}
 			node.waitings.remove(groupName);
+			endGeneric();
 		}
 	}
 	
@@ -107,12 +111,15 @@ public class GenericRole extends ReceiverAdapter{
 			else
 				fitness = 0;
 			map.put(chan.getAddressAsString(), fitness);
+			todo=1;
 		
-		}else if(map.get("A3Deactivate")!=null){
+		}
+		if(map.get("A3Deactivate")!=null){
 			node.waitings.remove(this.chan.getClusterName());
 			node.terminate(this.chan.getClusterName());
-		
-		}else {
+			todo=2;
+		}
+		if(todo==0){
 			String groupName = this.chan.getClusterName();
 			String role = node.getGroupInfo(groupName).getFollower().get(0);
 			node.putActiveRole(groupName, role);
@@ -128,6 +135,7 @@ public class GenericRole extends ReceiverAdapter{
 				node.close(groupName);
 			}
 			node.waitings.remove(groupName);
+			endGeneric();
 		}
 	}
 	
@@ -163,4 +171,10 @@ public class GenericRole extends ReceiverAdapter{
 		return max;
 	}
 	
+	private void endGeneric(){
+		this.node = null;
+		this.chan = null;
+		this.map = null;
+		this.notifier = null;
+	}
 }
