@@ -15,6 +15,8 @@ public class SubYellowFollower extends A3JGFollowerRole{
 	
 	public SubYellowFollower(int resourceCost) {
 		super(resourceCost);
+		this.setElectionTime(500);
+		this.setMaxAttempt(1);
 	}
 
 	public Agent getAgent() {
