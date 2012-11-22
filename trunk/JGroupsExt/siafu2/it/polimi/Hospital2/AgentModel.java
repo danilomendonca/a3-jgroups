@@ -433,8 +433,7 @@ public class AgentModel extends BaseAgentModel {
 				break;
 				
 			case ELECTION:
-				if(!a.isAtDestination())
-					a.set(ACTIVITY, Activity.WALKING);
+				a.set(ACTIVITY, Activity.WALKING);
 				break;
 				
 			case OUT:
@@ -445,43 +444,43 @@ public class AgentModel extends BaseAgentModel {
 				if(num<=5 && (now.getHour()<2)||(now.getHour()>=11 && now.getHour()<13)){
 					int visible = (int) (Math.random()*rand);
 					if(visible==0 && now.getMinute()%div==0){
-						a.setSpeed(4 + (int) (Math.random()*3));
+						a.setSpeed(3 + (int) (Math.random()*3));
 						start=true;
 					}
 				}else if(num>5 && num<=10 && ((now.getHour()>=2 && now.getHour()<4)||(now.getHour()>=13 && now.getHour()<14))){
 					int visible = (int) (Math.random()*rand);
 					if(visible==0 && now.getMinute()%div==0){
-						a.setSpeed(4 + (int) (Math.random()*3));
+						a.setSpeed(3 + (int) (Math.random()*3));
 						start=true;
 					}
 				}else if(num>10 && num<=15 && ((now.getHour()>=4 && now.getHour()<6)||(now.getHour()>=14 && now.getHour()<16))){
 					int visible = (int) (Math.random()*rand);
 					if(visible==0 && now.getMinute()%div==0){
-						a.setSpeed(4 + (int) (Math.random()*3));
+						a.setSpeed(3 + (int) (Math.random()*3));
 						start=true;
 					}
 				}else if(num>15 && num<=25 && ((now.getHour()>=6 && now.getHour()<8)||(now.getHour()>=16 && now.getHour()<18))){
 					int visible = (int) (Math.random()*rand);
 					if(visible==0 && now.getMinute()%div==0){
-						a.setSpeed(4 + (int) (Math.random()*3));
+						a.setSpeed(3 + (int) (Math.random()*3));
 						start=true;
 					}
 				}else if(num>25 && num<=35 && ((now.getHour()>=8 && now.getHour()<9)||(now.getHour()>=18 && now.getHour()<20))){
 					int visible = (int) (Math.random()*rand);
 					if(visible==0 && now.getMinute()%div==0){
-						a.setSpeed(4 + (int) (Math.random()*3));
+						a.setSpeed(3 + (int) (Math.random()*3));
 						start=true;
 					}
 				}else if(num>35 && num<=42 && ((now.getHour()>=9 && now.getHour()<10)||(now.getHour()>=20 && now.getHour()<22))){
 					int visible = (int) (Math.random()*rand);
 					if(visible==0 && now.getMinute()%div==0){
-						a.setSpeed(4 + (int) (Math.random()*3));
+						a.setSpeed(3 + (int) (Math.random()*3));
 						start=true;
 					}
 				}else if(num>42 && num<=50 && ((now.getHour()>=10 && now.getHour()<11)||now.getHour()>=22)){
 					int visible = (int) (Math.random()*rand);
 					if(visible==0 && now.getMinute()%div==0){
-						a.setSpeed(4 + (int) (Math.random()*3));
+						a.setSpeed(3 + (int) (Math.random()*3));
 						start=true;
 					}
 				}

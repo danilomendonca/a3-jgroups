@@ -15,6 +15,8 @@ public class YellowFollower extends A3JGFollowerRole{
 	
 	public YellowFollower(int resourceCost) {
 		super(resourceCost);
+		this.setElectionTime(500);
+		this.setMaxAttempt(1);
 	}
 	
 	public Agent getAgent() {
@@ -41,6 +43,7 @@ public class YellowFollower extends A3JGFollowerRole{
 		while (this.active) {
 			try {
 				if(!world.findAllAgentsNear(screen.getPos(), 70, true).contains(agent)){
+					agent.setImage("HumanYellow");
 					this.getNode().terminate("sub" + this.getChan().getClusterName());
 					this.getNode().terminate(this.getChan().getClusterName());
 				}
