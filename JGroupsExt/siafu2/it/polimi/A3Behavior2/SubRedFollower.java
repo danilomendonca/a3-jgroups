@@ -15,7 +15,7 @@ public class SubRedFollower extends A3JGFollowerRole{
 	
 	public SubRedFollower(int resourceCost) {
 		super(resourceCost);
-		this.setElectionTime(500);
+		this.setElectionTime(1000);
 		this.setMaxAttempt(1);
 	}
 
