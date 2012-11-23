@@ -27,7 +27,7 @@ public class SubRedSupervisor extends A3JGSupervisorRole{
 	
 	@Override
 	public void run() {
-		agent.setImage("CarRed");
+		agent.setImage("SuperMagenta");
 		try {
 			this.getNode().joinGroup(this.getChan().getClusterName().substring(3));
 		} catch (Exception e) {
@@ -49,8 +49,6 @@ public class SubRedSupervisor extends A3JGSupervisorRole{
 
 	@Override
 	public void updateFromFollower(A3JGMessage msg) {
-		
-		
 	}
 
 	@Override

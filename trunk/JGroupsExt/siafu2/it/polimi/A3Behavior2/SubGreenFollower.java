@@ -15,7 +15,7 @@ public class SubGreenFollower extends A3JGFollowerRole{
 	
 	public SubGreenFollower(int resourceCost) {
 		super(resourceCost);
-		this.setElectionTime(500);
+		this.setElectionTime(1000);
 		this.setMaxAttempt(1);
 	}
 

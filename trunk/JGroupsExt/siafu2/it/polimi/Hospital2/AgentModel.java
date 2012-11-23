@@ -369,7 +369,7 @@ public class AgentModel extends BaseAgentModel {
 							a.setVisible(false);
 							a.setSpeed(0);
 						}else if(!sensiblePos(a.getPos())){
-							a.set(ACTIVITY, Activity.ELECTION);
+							;
 						}else{
 							a.set(ACTIVITY, Activity.WAITING);
 							a.set(TIME, now.shift(0, 20));
@@ -430,10 +430,6 @@ public class AgentModel extends BaseAgentModel {
 				break;
 				
 			case INACTIVE:
-				break;
-				
-			case ELECTION:
-				a.set(ACTIVITY, Activity.WALKING);
 				break;
 				
 			case OUT:
