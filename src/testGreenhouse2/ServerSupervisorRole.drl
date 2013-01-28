@@ -1,0 +1,38 @@
+//created on: 6-dic-2012
+package testGreenhouse2
+
+//list any import classes here.
+import A3JGroups.autonomic.MAPEManager;
+import testGreenhouse2.KB.*;
+
+
+//declare any global variables here
+global MAPEManager mapeManager;
+
+
+
+rule "Periodic Loop"
+
+timer ( int: 10s)
+    when
+        //conditions
+        PeriodicLoop( )
+    then
+        //actions
+		mapeManager.startMAPELoop();
+
+end
+
+rule "Synced Loop"
+
+    //include attributes such as "salience" here...
+    
+    when
+        //conditions
+        $s : SyncedLoop(  )
+    then
+        //actions
+        retract( $s );
+        mapeManager.startMAPELoop();
+        
+end
