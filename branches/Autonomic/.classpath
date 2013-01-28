@@ -6,5 +6,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="lib/JGroups.jar"/>
 	<classpathentry kind="lib" path="lib/Siafu.jar"/>
+	<classpathentry kind="lib" path="src/A3JGroups/autonomic/org.eclipse.jdt.core_3.8.2.v20120814-155456.jar"/>
+	<classpathentry kind="con" path="DROOLS/Drools"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

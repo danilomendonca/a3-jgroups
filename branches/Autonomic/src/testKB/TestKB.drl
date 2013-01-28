@@ -1,0 +1,31 @@
+//created on: 27-gen-2013
+package testKB
+
+//list any import classes here.
+import A3JGroups.autonomic.MAPEManager;
+
+
+//declare any global variables here
+global MAPEManager mapeManager;
+
+
+rule "Your First Rule"
+
+	timer ( int: 10s)
+    when
+    	PeriodicLoop( )
+    then
+        //actions
+        System.out.println("startMAPELoop from rule");
+        mapeManager.startMAPELoop();
+
+end
+
+//rule "Your Second Rule"
+    //include attributes such as "salience" here...
+    //when
+        //conditions
+   // then
+        //actions
+
+//end
