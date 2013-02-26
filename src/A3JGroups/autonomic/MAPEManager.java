@@ -66,12 +66,17 @@ public class MAPEManager implements Runnable {
 
 	public void insertInAdjacentKB(String groupName, Object fact) {
 
+		insertInMyNode(groupName, fact);
+
+	}
+
+	private void insertInMyNode(String groupName, Object fact) {
 		A3JGNode node = supervisorRole.getNode();
 
 		JChannel chan = node.getChannels(groupName);
 
 		if (chan != null) {
-			// Il nodo fa parte di un gruppo con quel nome
+			// Il mio nodo fa parte di un gruppo con quel nome
 
 			// Verifico se è supervisor o follower
 			String supName = node.getGroupInfo(groupName).getSupervisor()
@@ -96,7 +101,6 @@ public class MAPEManager implements Runnable {
 						new A3JGMessage("A3MapeManagerMessage", fact));
 			}
 		}
-
 	}
 
 }
