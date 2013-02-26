@@ -1,5 +1,7 @@
 package A3JGroups.autonomic;
 
+import java.util.List;
+
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
@@ -10,6 +12,7 @@ import org.drools.builder.ResourceType;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.rule.FactHandle;
+import org.jgroups.Address;
 import org.jgroups.Message;
 
 import A3JGroups.A3JGMessage;
@@ -53,6 +56,8 @@ public abstract class AutonomicJGSupervisorRole extends A3JGSupervisorRole {
 			super.receive(msg);
 	}
 
+	// TODO fare questi metodi astratti?
+
 	@Override
 	public void messageFromFollower(A3JGMessage msg) {
 		// TODO Auto-generated method stub
@@ -78,6 +83,15 @@ public abstract class AutonomicJGSupervisorRole extends A3JGSupervisorRole {
 	public abstract boolean Plan();
 
 	public abstract boolean Execute();
+
+	public boolean sendMAPEMessageToFollowers(A3JGMessage mex,
+			List<Address> dest) {
+
+		mex.setValueID("MAPEMessage" + mex.getValueID());
+
+		return sendMessageToFollower(mex, dest);
+
+	}
 
 	public void insertOrUpdateKB(Object fact) {
 
