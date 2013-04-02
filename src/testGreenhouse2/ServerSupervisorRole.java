@@ -28,7 +28,6 @@ public class ServerSupervisorRole extends AutonomicJGSupervisorRole {
 
 	@Override
 	public void run() {
-		super.run();
 		// volendo si può verificare che non esista un backup di una
 		// listasensori di un supervisor che ha avuto una failure
 		System.out.println("[" + getNode().getID()

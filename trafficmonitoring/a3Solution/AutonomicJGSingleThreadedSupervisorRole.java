@@ -1,4 +1,4 @@
-package A3JGroups.autonomic;
+package a3Solution;
 
 import java.util.List;
 
@@ -15,26 +15,37 @@ import org.drools.runtime.rule.FactHandle;
 import org.jgroups.Address;
 import org.jgroups.Message;
 
+import utilities.threading.ThreadManager;
 import A3JGroups.A3JGMessage;
-import A3JGroups.A3JGSupervisorRole;
 
-public abstract class AutonomicJGSupervisorRole extends A3JGSupervisorRole {
+public abstract class AutonomicJGSingleThreadedSupervisorRole extends
+		A3JGSingleThreadedSupervisorRole {
 
 	private StatefulKnowledgeSession statefulSession;
-	private MAPEManager mapeManager;
+	private MAPEManagerSingleThreaded mapeManager;
+	private ThreadManager tm;
 
-	public AutonomicJGSupervisorRole(int resourceCost, String rulesFilename) {
-		super(resourceCost);
-		mapeManager = new MAPEManager(this, 2000);
+	public AutonomicJGSingleThreadedSupervisorRole(int resourceCost,
+			String rulesFilename, ThreadManager tm) {
+		super(resourceCost, tm);
+		mapeManager = new MAPEManagerSingleThreaded(this, 2000);
+		this.tm = tm;
 		loadKB(rulesFilename);
 		executeRules();
 	}
 
-	public MAPEManager getMapeManager() {
+	@Override
+	public void run() {
+
+		// new Thread(new MAPEManager(this, 2000)).start();
+
+	}
+
+	public MAPEManagerSingleThreaded getMapeManager() {
 		return mapeManager;
 	}
 
-	public void setMapeManager(MAPEManager mapeManager) {
+	public void setMapeManager(MAPEManagerSingleThreaded mapeManager) {
 		this.mapeManager = mapeManager;
 	}
 
@@ -47,6 +58,24 @@ public abstract class AutonomicJGSupervisorRole extends A3JGSupervisorRole {
 			executeRules();
 		} else
 			super.receive(msg);
+	}
+
+	@Override
+	public void messageFromFollower(A3JGMessage msg) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateFromFollower(A3JGMessage msg) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int fitnessFunc() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	public abstract boolean Monitor();
@@ -81,15 +110,6 @@ public abstract class AutonomicJGSupervisorRole extends A3JGSupervisorRole {
 			statefulSession.update(factHandle, fact);
 		}
 
-	}
-
-	public String getFactFromKB(Object fact) {
-		FactHandle factHandle = statefulSession.getFactHandle(fact);
-		if (factHandle != null) {
-			return factHandle.toExternalForm();
-		} else {
-			return null;
-		}
 	}
 
 	public void executeRules() {

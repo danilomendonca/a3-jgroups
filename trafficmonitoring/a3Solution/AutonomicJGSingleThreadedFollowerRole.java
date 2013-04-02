@@ -1,14 +1,25 @@
-package A3JGroups.autonomic;
+package a3Solution;
 
 import org.jgroups.Message;
 
-import A3JGroups.A3JGFollowerRole;
+import utilities.threading.ThreadManager;
 import A3JGroups.A3JGMessage;
 
-public abstract class AutonomicJGFollowerRole extends A3JGFollowerRole {
+public abstract class AutonomicJGSingleThreadedFollowerRole extends
+		A3JGSingleThreadedFollowerRole {
 
-	public AutonomicJGFollowerRole(int resourceCost) {
-		super(resourceCost);
+	private ThreadManager tm;
+
+	public AutonomicJGSingleThreadedFollowerRole(int resourceCost,
+			ThreadManager tm) {
+		super(resourceCost, tm);
+		this.tm = tm;
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override

@@ -54,7 +54,6 @@ public class TestKBSupervisor extends AutonomicJGSupervisorRole {
 
 	@Override
 	public void run() {
-		super.run();
 		insertOrUpdateKB(new PeriodicLoop());
 	}
 
