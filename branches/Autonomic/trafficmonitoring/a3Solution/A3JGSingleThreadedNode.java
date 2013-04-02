@@ -1,4 +1,4 @@
-package A3JGroups;
+package a3Solution;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +8,13 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
 import org.jgroups.blocks.ReplicatedHashMap;
+
+import utilities.threading.ThreadManager;
+import A3JGroups.A3JGMessage;
+import A3JGroups.A3JGRHMNotification;
+import A3JGroups.A3JGroup;
+
+//TODO vedere dove fare l'unregister dei threads al threadmanager
 
 /**
  * A3JGNode is the main element of A3. A node represents an element connected to
@@ -27,23 +34,51 @@ import org.jgroups.blocks.ReplicatedHashMap;
  * @author bett.marco88@gmail.com
  * 
  */
-public abstract class A3JGNode {
+public abstract class A3JGSingleThreadedNode {
+
+	private boolean logging = false;
+
+	private ThreadManager tm;
 
 	private int resourceThreshold;
 	private String ID;
 	private long timeout = 10000;
 
-	private Map<String, A3JGSupervisorRole> supervisorRoles = new HashMap<String, A3JGSupervisorRole>();
-	private Map<String, A3JGFollowerRole> followerRoles = new HashMap<String, A3JGFollowerRole>();
+	private Map<String, A3JGSingleThreadedSupervisorRole> supervisorRoles = new HashMap<String, A3JGSingleThreadedSupervisorRole>();
+	private Map<String, A3JGSingleThreadedFollowerRole> followerRoles = new HashMap<String, A3JGSingleThreadedFollowerRole>();
 	private Map<String, A3JGroup> groupInfo = new HashMap<String, A3JGroup>();
 	private Map<String, JChannel> channels = new HashMap<String, JChannel>();
 	private Map<String, String> activeRole = new HashMap<String, String>();
-	protected Map<String, GenericRole> waitings = new HashMap<String, GenericRole>();
+	protected Map<String, SingleThreadedGenericRole> waitings = new HashMap<String, SingleThreadedGenericRole>();
 	private Object inNodeSharedMemory;
 
-	public A3JGNode(String ID) {
+	public A3JGSingleThreadedNode(String ID, ThreadManager tm) {
 		super();
 		this.ID = ID;
+		this.tm = tm;
+		if (logging)
+			tm.register(new Logger());
+	}
+
+	private class Logger implements Runnable {
+
+		@Override
+		public void run() {
+
+			long sentBytes = 0;
+
+			for (String channel : channels.keySet()) {
+				// System.out.println("[" + getID() + "]: Node " + getID()
+				// + " channel " + channel + " sent bytes = "
+				// + channels.get(channel).getSentBytes());
+				sentBytes += channels.get(channel).getSentBytes();
+			}
+
+			System.out.println("[" + getID() + " Log]: Node " + getID()
+					+ " total of sent bytes = " + sentBytes);
+
+		}
+
 	}
 
 	public void setResourceThreshold(int resourceThreshold) {
@@ -74,7 +109,7 @@ public abstract class A3JGNode {
 		return groupInfo.get(groupName);
 	}
 
-	public void addSupervisorRole(A3JGSupervisorRole role) {
+	public void addSupervisorRole(A3JGSingleThreadedSupervisorRole role) {
 		this.supervisorRoles.put(role.getClass().getName(), role);
 		role.setNode(this);
 	}
@@ -83,15 +118,15 @@ public abstract class A3JGNode {
 		this.timeout = timeout;
 	}
 
-	public A3JGSupervisorRole getSupervisorRole(String className) {
+	public A3JGSingleThreadedSupervisorRole getSupervisorRole(String className) {
 		return supervisorRoles.get(className);
 	}
 
-	public A3JGFollowerRole getFollowerRole(String className) {
+	public A3JGSingleThreadedFollowerRole getFollowerRole(String className) {
 		return followerRoles.get(className);
 	}
 
-	public void addFollowerRole(A3JGFollowerRole role) {
+	public void addFollowerRole(A3JGSingleThreadedFollowerRole role) {
 		this.followerRoles.put(role.getClass().getName(), role);
 		role.setNode(this);
 	}
@@ -159,12 +194,12 @@ public abstract class A3JGNode {
 
 		map.start(timeout);
 
-		// vedere che ruolo attivare e salvare stringa in activeRole
 		if (groupInfo.containsKey(groupName)) {
+
 			String supName = getGroupInfo(groupName).getSupervisor().get(0);
 			String folName = getGroupInfo(groupName).getFollower().get(0);
+
 			if (map.get("A3Supervisor") == null) {
-				System.out.println("[" + getID() + "]: Sono in 1");
 				if (this.getSupervisorRole(supName) != null) {
 					if (map.putIfAbsent("A3Supervisor", chan.getAddress()) == null) {
 						map.remove("A3FitnessFunction");
@@ -174,7 +209,8 @@ public abstract class A3JGNode {
 						this.getSupervisorRole(supName).setNotifier(notifier);
 						this.getSupervisorRole(supName).index = -1;
 						chan.setReceiver(this.getSupervisorRole(supName));
-						new Thread(this.getSupervisorRole(supName)).start();
+						tm.register(this.getSupervisorRole(supName));
+						// new Thread(this.getSupervisorRole(supName)).start();
 						putActiveRole(groupName, supName);
 						return true;
 					} else {
@@ -184,7 +220,9 @@ public abstract class A3JGNode {
 							this.getFollowerRole(folName).setMap(map);
 							this.getFollowerRole(folName).setNotifier(notifier);
 							chan.setReceiver(this.getFollowerRole(folName));
-							new Thread(this.getFollowerRole(folName)).start();
+							tm.register(this.getFollowerRole(folName));
+							// new
+							// Thread(this.getFollowerRole(folName)).start();
 							putActiveRole(groupName, folName);
 							return true;
 						}
@@ -192,20 +230,24 @@ public abstract class A3JGNode {
 				}
 			} else if (chan.getView().getMembers()
 					.contains(map.get("A3Supervisor"))) {
-				System.out.println("[" + getID() + "]: Sono in 2");
+
 				if (this.getFollowerRole(folName) != null) {
+
 					this.getFollowerRole(folName).setActive(true);
 					this.getFollowerRole(folName).setChan(chan);
 					this.getFollowerRole(folName).setMap(map);
 					this.getFollowerRole(folName).setNotifier(notifier);
-					new Thread(this.getFollowerRole(folName)).start();
+					tm.register(this.getFollowerRole(folName));
+					// new Thread(this.getFollowerRole(folName)).start();
 					chan.setReceiver(this.getFollowerRole(folName));
 					putActiveRole(groupName, folName);
 					return true;
+				} else {
+
 				}
 			} else {
-				System.out.println("[" + getID() + "]: Sono in 3");
-				GenericRole generic = new GenericRole(this, chan, map, notifier);
+				SingleThreadedGenericRole generic = new SingleThreadedGenericRole(
+						this, chan, map, notifier, tm);
 				chan.setReceiver(generic);
 				generic.waitElection();
 				waitings.put(groupName, generic);
@@ -237,10 +279,23 @@ public abstract class A3JGNode {
 		if (this.getSupervisorRole(role) != null
 				&& this.getSupervisorRole(role).isActive()) {
 			this.getSupervisorRole(role).setActive(false);
+			tm.unregister(this.getSupervisorRole(role));
 		} else if (this.getFollowerRole(role) != null
-				&& this.getFollowerRole(role).isActive())
+				&& this.getFollowerRole(role).isActive()) {
 			this.getFollowerRole(role).setActive(false);
+			tm.unregister(this.getFollowerRole(role));
+		}
 		close(groupName);
+	}
+
+	public synchronized void fail() {
+		// Copia della map activeRole per non avere eccezione
+		// concorrenza
+		Map<String, String> copy = new HashMap<String, String>(activeRole);
+
+		for (String group : copy.keySet()) {
+			terminate(group);
+		}
 	}
 
 	/**
@@ -309,7 +364,8 @@ public abstract class A3JGNode {
 						this.getSupervisorRole(supName).setNotifier(notifier);
 						this.getSupervisorRole(supName).index = -1;
 						chan.setReceiver(this.getSupervisorRole(supName));
-						new Thread(this.getSupervisorRole(supName)).start();
+						tm.register(this.getSupervisorRole(supName));
+						// new Thread(this.getSupervisorRole(supName)).start();
 						putActiveRole(groupName, supName);
 
 						A3JGMessage mex = new A3JGMessage("A3SupervisorChange");
@@ -325,8 +381,8 @@ public abstract class A3JGNode {
 					}
 				}
 				if (challenge) {
-					GenericRole generic = new GenericRole(this, chan, map,
-							notifier);
+					SingleThreadedGenericRole generic = new SingleThreadedGenericRole(
+							this, chan, map, notifier, tm);
 					chan.setReceiver(generic);
 					generic.supervisorChallenge();
 					waitings.put(groupName, generic);
@@ -388,7 +444,8 @@ public abstract class A3JGNode {
 						this.getSupervisorRole(supName).index = -1;
 						this.getSupervisorRole(supName).setSplitsup(true);
 						chan.setReceiver(this.getSupervisorRole(supName));
-						new Thread(this.getSupervisorRole(supName)).start();
+						tm.register(this.getSupervisorRole(supName));
+						// new Thread(this.getSupervisorRole(supName)).start();
 						putActiveRole("A3Split" + groupName, supName);
 						return true;
 					}
@@ -399,7 +456,8 @@ public abstract class A3JGNode {
 					this.getFollowerRole(folName).setChan(chan);
 					this.getFollowerRole(folName).setMap(map);
 					this.getFollowerRole(folName).setNotifier(notifier);
-					new Thread(this.getFollowerRole(folName)).start();
+					tm.register(this.getFollowerRole(folName));
+					// new Thread(this.getFollowerRole(folName)).start();
 					chan.setReceiver(this.getFollowerRole(folName));
 					putActiveRole(groupName, folName);
 					return true;

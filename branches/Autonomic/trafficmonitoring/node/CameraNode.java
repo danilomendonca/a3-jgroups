@@ -178,6 +178,8 @@ public class CameraNode implements Runnable {
 	 *           *
 	 *************/
 	
+	//non usato
+	
 
 	public void run() { 
 	    while (running){

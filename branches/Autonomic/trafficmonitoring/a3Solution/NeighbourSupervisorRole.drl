@@ -1,0 +1,23 @@
+//created on: 7-mar-2013
+package a3Solution
+
+//list any import classes here.
+import a3Solution.MAPEManagerSingleThreaded;
+import a3Solution.KB.*;
+
+
+//declare any global variables here
+global MAPEManagerSingleThreaded mapeManager;
+
+
+rule "NewView"
+
+    when
+        //conditions
+        NewView ( )
+        
+    then
+        //actions
+        mapeManager.startMAPELoop();
+
+end

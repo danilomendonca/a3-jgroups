@@ -1,38 +1,39 @@
 package node.developer.sensors;
-import simulator.RoadSegment;
-import simulator.Car;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import node.organizationMiddleware.contextManager.contextDirectories.Context;
-
-
+import simulator.Car;
+import simulator.RoadSegment;
 import utilities.NodeID;
 
-public class Camera{
+public class Camera {
 	private int fromIndex;
 	private int toIndex;
 	private Car[] viewingRange;
-	//@Pieter
+	// @Pieter
 	private Vector<String> aliveNeighbours = new Vector<String>();
-	private Vector<String> physicalNeighbors = new Vector<String>();
-	
+	public Vector<String> physicalNeighbors = new Vector<String>();
+
 	private NodeID ID;
-	
-	//measurements
+
+	// measurements
 	private double density;
 	private double avg_velocity;
-	
-	//used by the GUI
+
+	// used by the GUI
 	private int x;
 	private int y;
-	
-	//used by the GUI
+
+	// used by the GUI
 	private double dx;
 	private double dy;
-	
-	public Camera(NodeID ID, RoadSegment segment, int fromIndex, int toIndex){
-		//System.out.println("Camera: "+ID.toString()+" from: "+fromIndex+" to: "+toIndex);
-		
+
+	public Camera(NodeID ID, RoadSegment segment, int fromIndex, int toIndex) {
+		// System.out.println("Camera: "+ID.toString()+" from: "+fromIndex+" to: "+toIndex);
+
 		this.ID = ID;
 		this.fromIndex = fromIndex;
 		this.toIndex = toIndex;
@@ -40,180 +41,181 @@ public class Camera{
 		aliveNeighbours = new Vector<String>();
 		calculateGUIPosition(segment, fromIndex, toIndex);
 	}
-	
-	//@Pieter
-	public synchronized void addPhysicalNeighbour(String neighbour){
-		if(!neighbour.equals(this.ID.toString()) && !this.physicalNeighbors.contains(neighbour)){
+
+	// @Pieter
+	public synchronized void addPhysicalNeighbour(String neighbour) {
+		if (!neighbour.equals(this.ID.toString())
+				&& !this.physicalNeighbors.contains(neighbour)) {
 			this.physicalNeighbors.add(neighbour);
 		}
-		
-		//@Pieter
-		if(!neighbour.equals(this.ID.toString()) && !this.aliveNeighbours.contains(neighbour)){
+
+		// @Pieter
+		if (!neighbour.equals(this.ID.toString())
+				&& !this.aliveNeighbours.contains(neighbour)) {
 			this.aliveNeighbours.add(neighbour);
 		}
 	}
-		
-	public NodeID getAgentID(){
+
+	public NodeID getAgentID() {
 		return ID;
 	}
-	
-	public int getFromIndex(){
+
+	public int getFromIndex() {
 		return this.fromIndex;
 	}
-	
-	public int getToIndex(){
+
+	public int getToIndex() {
 		return this.toIndex;
 	}
-		
-	public String[] getAliveNeighbourIDs(){
+
+	public String[] getAliveNeighbourIDs() {
 		return this.aliveNeighbours.toArray(new String[0]);
 	}
-	
-	public ArrayList<NodeID> getAliveNeighbourIDlist(){
+
+	public ArrayList<NodeID> getAliveNeighbourIDlist() {
 		ArrayList<NodeID> result = new ArrayList<NodeID>();
-		for(Enumeration<String> e = this.aliveNeighbours.elements(); e.hasMoreElements();){
+		for (Enumeration<String> e = this.aliveNeighbours.elements(); e
+				.hasMoreElements();) {
 			result.add(new NodeID(Integer.parseInt(e.nextElement())));
 		}
 		return result;
 	}
-	
-	public Vector<String> getAliveNeighbourIdVector(){
+
+	public Vector<String> getAliveNeighbourIdVector() {
 		return this.aliveNeighbours;
 	}
-	
-	//@Pieter
-	public void setAliveNeighbours(ArrayList<NodeID> aliveNeighbourList){
+
+	// @Pieter
+	public void setAliveNeighbours(ArrayList<NodeID> aliveNeighbourList) {
 		this.aliveNeighbours.clear();
-		
-		for(NodeID neighbor : aliveNeighbourList)
+
+		for (NodeID neighbor : aliveNeighbourList)
 			this.aliveNeighbours.add(neighbor.toString());
 	}
-	
-	//@Pieter
-	public void resetAliveNeighbourList(){
+
+	// @Pieter
+	public void resetAliveNeighbourList() {
 		this.aliveNeighbours.clear();
 		this.aliveNeighbours.addAll(this.physicalNeighbors);
 	}
-	
-	
-		
-	public void measure(){
+
+	public void measure() {
 		avg_velocity = 0;
 		density = 0;
-	    int rhoc = 0;
-	    int vsum = 0;
-	    
-		for(int i = fromIndex; i < toIndex; i++) {
-	    	if (viewingRange[i] != null && viewingRange[i].speed >= 0) {
-	    		vsum+=viewingRange[i].speed;
-	    		rhoc++;
-	    	}
-	    }
-	    avg_velocity = (double)(vsum)/(double)((rhoc > 0) ? rhoc : 1 );
-	    density =(double)(rhoc)/(double)(toIndex-fromIndex);
+		int rhoc = 0;
+		int vsum = 0;
+
+		for (int i = fromIndex; i < toIndex; i++) {
+			if (viewingRange[i] != null && viewingRange[i].speed >= 0) {
+				vsum += viewingRange[i].speed;
+				rhoc++;
+			}
+		}
+		avg_velocity = (double) (vsum) / (double) ((rhoc > 0) ? rhoc : 1);
+		density = (double) (rhoc) / (double) (toIndex - fromIndex);
 	}
-	
+
 	/**
 	 * Kan gaan van 0 tot 1
 	 */
-	public double getDensity(){
+	public double getDensity() {
 		measure();
 		return density;
 	}
-	
+
 	/**
 	 * kan gaan van 0 tot 5 ongeveer
 	 */
-	public double getIntensity(){
+	public double getIntensity() {
 		measure();
-		return getDensity()*getAvgVelocity();
+		return getDensity() * getAvgVelocity();
 	}
-	
-	public double getAvgVelocity(){
+
+	public double getAvgVelocity() {
 		measure();
 		return avg_velocity;
-		//return 2;
+		// return 2;
 	}
-	
+
 	/*************
 	 * GUI STUFF *
 	 *************/
-	
-	private void calculateGUIPosition(RoadSegment segment, int fromIndex, int toIndex){
-		double x1 = (double)segment.getBegin().getX();
-		double y1 = (double)segment.getBegin().getY();
-		double x2 = (double)segment.getEnd().getX();
-		double y2 = (double)segment.getEnd().getY();
-		
-		double deltaX = (x2-x1)/segment.LENGTH;
-		double deltaY = (y2-y1)/segment.LENGTH;
+
+	private void calculateGUIPosition(RoadSegment segment, int fromIndex,
+			int toIndex) {
+		double x1 = (double) segment.getBegin().getX();
+		double y1 = (double) segment.getBegin().getY();
+		double x2 = (double) segment.getEnd().getX();
+		double y2 = (double) segment.getEnd().getY();
+
+		double deltaX = (x2 - x1) / segment.LENGTH;
+		double deltaY = (y2 - y1) / segment.LENGTH;
 		this.dx = deltaX;
 		this.dy = deltaY;
-		
-		double z = fromIndex + (toIndex-fromIndex)/2;
-		
-		double alpha = Math.atan((y1-y2)/(x2-x1));
-		
-		this.x = (int)(x1+deltaX*z - 12*Math.sin(alpha));
-		this.y = (int)(y1+deltaY*z - 12*Math.cos(alpha));		
+
+		double z = fromIndex + (toIndex - fromIndex) / 2;
+
+		double alpha = Math.atan((y1 - y2) / (x2 - x1));
+
+		this.x = (int) (x1 + deltaX * z - 12 * Math.sin(alpha));
+		this.y = (int) (y1 + deltaY * z - 12 * Math.cos(alpha));
 	}
-	
-	public int getX(){
+
+	public int getX() {
 		return x;
 	}
-	
-	public int getY(){
+
+	public int getY() {
 		return y;
 	}
-	
-	public double getDx(){
+
+	public double getDx() {
 		return dx;
 	}
-	
-	public double getDy(){
+
+	public double getDy() {
 		return dy;
 	}
-	
+
 	/*****************
-	 *               * 
-	 * GUI HACKS ... *
-	 *               *
+	 * * GUI HACKS ... * *
 	 *****************/
-	
-	//link to nodes context, to be able to show the current state of the node in the gui
-	
+
+	// link to nodes context, to be able to show the current state of the node
+	// in the gui
+
 	private Context myNodesContext;
-	
-	public void setOrganizationContext(Context ctx){
+
+	public void setOrganizationContext(Context ctx) {
 		this.myNodesContext = ctx;
 	}
-	
-	public Context getNodesContext(){
+
+	public Context getNodesContext() {
 		return this.myNodesContext;
 	}
-	
+
 	private boolean isFailed = false;
-	
-	public void fail(){
+
+	public void fail() {
 		this.isFailed = true;
 	}
-	
-	//@Pieter
-	public void bringBackOnline(){
+
+	// @Pieter
+	public void bringBackOnline() {
 		this.isFailed = false;
-		
-		//Reset out-of-date list of alive neighbor nodes
+
+		// Reset out-of-date list of alive neighbor nodes
 		this.resetAliveNeighbourList();
-		
-		//Remove out-of-date organization context
+
+		// Remove out-of-date organization context
 		this.myNodesContext = null;
-		
-		//Reset measurements
+
+		// Reset measurements
 		this.density = 0;
 		this.avg_velocity = 0;
 	}
-	
-	public boolean isFailed(){
+
+	public boolean isFailed() {
 		return this.isFailed;
 	}
 }
