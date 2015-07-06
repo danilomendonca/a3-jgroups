@@ -1,0 +1,1 @@
+JGroups-based implementation of A-3
